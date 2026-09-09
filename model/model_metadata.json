@@ -1,0 +1,42 @@
+{
+    "project": "MedVisionAI",
+    "model_architecture": "EfficientNet-B0",
+    "pretrained_weights": "ImageNet DEFAULT",
+    "task": "Binary Diabetic Retinopathy Screening",
+    "classes": {
+        "0": "No DR",
+        "1": "DR Present"
+    },
+    "image_input_size": [
+        224,
+        224,
+        3
+    ],
+    "normalization": {
+        "mean": [
+            0.485,
+            0.456,
+            0.406
+        ],
+        "std": [
+            0.229,
+            0.224,
+            0.225
+        ]
+    },
+    "dataset": "APTOS 2019 Blindness Detection",
+    "test_metrics": {
+        "accuracy": 0.9691,
+        "precision": 0.9679,
+        "recall": 0.9713,
+        "specificity": 0.9668,
+        "f1_score": 0.9696,
+        "roc_auc": 0.9975,
+        "confusion_matrix": {
+            "TN": 262,
+            "FP": 9,
+            "FN": 8,
+            "TP": 271
+        }
+    }
+}
