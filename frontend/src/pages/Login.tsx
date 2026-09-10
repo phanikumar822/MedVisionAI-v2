@@ -38,8 +38,8 @@ const Login = () => {
     }
   };
 
-  // Generate 75 grid spans for interactive background
-  const gridSpans = Array.from({ length: 75 });
+  // Generate 260 grid spans to cover the full viewport edge-to-edge
+  const gridSpans = Array.from({ length: 260 });
 
   return (
     <div className="auth-wrapper">

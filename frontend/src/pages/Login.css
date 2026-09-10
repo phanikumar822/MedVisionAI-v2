@@ -22,7 +22,8 @@
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-content: flex-start;
+  align-items: flex-start;
   gap: 2px;
   flex-wrap: wrap;
   overflow: hidden;
