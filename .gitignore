@@ -1,1 +1,43 @@
+# Environment variables & secrets
+.env
+*.env
+.env.*
+
+# Python & Virtual Environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+ENV/
+*.db
+*.sqlite
+*.sqlite3
+
+# Backend runtime files
+backend/venv/
+backend/.venv/
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/reports_output/*
+!backend/reports_output/.gitkeep
+backend/chroma_db/
+backend/medvision.db
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.output/
+frontend/.vite/
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Misc
 generate_notebook.py
