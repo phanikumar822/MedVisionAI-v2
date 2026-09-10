@@ -61,8 +61,9 @@ const Login = () => {
               <p className="subtitle">Screen. Explain. Share. Understand.</p>
             </div>
 
-            {/* Mode Switcher Buttons: Doctor / Admin vs Patient */}
-            <div className="role-toggle">
+            {/* Smooth Sliding Role Switcher */}
+            <div className="role-toggle-container">
+              <div className={`role-toggle-pill ${mode === 'patient' ? 'patient' : ''}`}></div>
               <button
                 type="button"
                 className={`role-btn ${mode === 'doctor' ? 'active' : ''}`}
@@ -81,39 +82,43 @@ const Login = () => {
 
             {error && <div className="error-banner">{error}</div>}
 
-            <form onSubmit={handleSubmit}>
-              <div className="inputBox">
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  placeholder=" "
-                />
-                <i>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</i>
-              </div>
+            {/* Form Container with Keyed Smooth Switch Animation */}
+            <div className="form-container" key={mode}>
+              <form onSubmit={handleSubmit}>
+                <div className="inputBox">
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    placeholder=" "
+                  />
+                  <i>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</i>
+                </div>
 
-              <div className="inputBox">
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder=" "
-                />
-                <i>Password</i>
-              </div>
+                <div className="inputBox">
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder=" "
+                  />
+                  <i>Password</i>
+                </div>
 
-              <button type="submit" className="submit-btn" disabled={loading}>
-                {loading ? 'Authenticating…' : `Login as ${mode === 'doctor' ? 'Doctor / Admin' : 'Patient'}`}
-              </button>
-            </form>
+                <button type="submit" className="submit-btn" disabled={loading}>
+                  {loading ? 'Authenticating…' : `Login as ${mode === 'doctor' ? 'Doctor / Admin' : 'Patient'}`}
+                </button>
+              </form>
 
-            <p className="hint-text">
-              {mode === 'doctor'
-                ? '🔒 Admin credentials allow system-wide access and CSV data exports.'
-                : '🔑 Use the username & password set via your email activation link.'}
-            </p>
+              <p className="hint-text">
+                {mode === 'doctor'
+                  ? '🔒 Admin credentials allow system-wide access and CSV data exports.'
+                  : '🔑 Use the username & password set via your email activation link.'}
+              </p>
+            </div>
+
           </div>
         </div>
       </section>
