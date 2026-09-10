@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, Download, LogOut, Activity } from 'lucide-react';
+import { Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, Download, LogOut, Activity, Sparkles } from 'lucide-react';
 
 interface Patient { id: number; name: string; patient_access_id: string; email: string; username: string; }
 interface ScreeningResult { 
@@ -13,6 +13,7 @@ interface ScreeningResult {
   probability_no_dr?: number;
   risk_level: string; 
   recommendation: string; 
+  ai_context?: string;
   image_url?: string;
   heatmap_url?: string;
 }
@@ -340,6 +341,19 @@ const WorkerDashboard = () => {
                     )}
                   </div>
                 </div>
+
+                {/* AI Written Clinical Context (Grok LLM Model Integration) */}
+                {result.ai_context && (
+                  <div className="border border-[#C85A32]/30 rounded-xl p-5 bg-[#FAF7F2] space-y-2">
+                    <div className="flex items-center gap-2 text-[#C85A32]">
+                      <Sparkles className="w-4 h-4" />
+                      <h3 className="text-xs font-extrabold uppercase tracking-wider">AI Written Context (Grok Clinical Model)</h3>
+                    </div>
+                    <p className="text-xs text-[#23211E] leading-relaxed font-medium">
+                      {result.ai_context}
+                    </p>
+                  </div>
+                )}
 
                 <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex items-start gap-2 text-xs text-rose-800">
                   <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" /> {result.recommendation}

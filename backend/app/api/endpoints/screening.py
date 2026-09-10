@@ -7,6 +7,7 @@ from app.models.screening import Screening
 from app.models.patient import Patient
 from app.auth.deps import get_current_user, require_role
 from app.services.inference import inference_service
+from app.rag.llm import generate_ai_clinical_context
 import shutil
 import os
 import uuid
@@ -72,6 +73,15 @@ def screen_image(
         # Run inference
         result = inference_service.predict(file_path)
         
+        # Generate Grok AI written clinical context
+        ai_context_text = generate_ai_clinical_context(
+            prediction=result.get("prediction", "NO DR"),
+            confidence=result.get("confidence", 0.0),
+            risk_level=result.get("risk_level", "LOW"),
+            probability_dr=result.get("probability_dr", 0.0),
+            probability_no_dr=result.get("probability_no_dr", 0.0)
+        )
+        
         # Save screening record
         screening_id_str = f"MV-{uuid.uuid4().hex[:8].upper()}"
         
@@ -86,7 +96,8 @@ def screen_image(
             probability_no_dr=result.get("probability_no_dr"),
             confidence=result.get("confidence"),
             risk_level=result.get("risk_level"),
-            recommendation=result.get("recommendation")
+            recommendation=result.get("recommendation"),
+            ai_context=ai_context_text
         )
         db.add(new_screening)
         db.commit()
@@ -101,6 +112,7 @@ def screen_image(
             "confidence": new_screening.confidence,
             "risk_level": new_screening.risk_level,
             "recommendation": new_screening.recommendation,
+            "ai_context": new_screening.ai_context,
             "image_url": path_to_url(new_screening.image_path),
             "heatmap_url": path_to_url(new_screening.heatmap_path)
         }
@@ -110,4 +122,5 @@ def screen_image(
     except Exception as e:
         print("Screening exception:", e)
         raise HTTPException(status_code=500, detail="Inference failed")
+
 
