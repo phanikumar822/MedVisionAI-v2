@@ -1,8 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight } from 'lucide-react';
+import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, Activity, FileText, MessageSquare } from 'lucide-react';
 import './Login.css';
+
+const WORKFLOW_STEPS = [
+  {
+    id: 0,
+    icon: Activity,
+    title: "AI Retinal Inference & Grad-CAM Heatmaps",
+    desc: "Instant deep learning classification for Diabetic Retinopathy with explainable lesion localization overlays."
+  },
+  {
+    id: 1,
+    icon: FileText,
+    title: "Automated Clinical Reports & SMTP Alerts",
+    desc: "Generate exportable PDF diagnostic summaries and deliver direct email notification links to patients."
+  },
+  {
+    id: 2,
+    icon: MessageSquare,
+    title: "Patient RAG Health Assistant & Portal",
+    desc: "Interactive medical AI chatbot backed by clinical RAG knowledge base for patient query resolution."
+  }
+];
 
 const Login = () => {
   const [mode, setMode] = useState<'doctor' | 'patient'>('doctor');
@@ -10,8 +31,16 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % WORKFLOW_STEPS.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,16 +99,27 @@ const Login = () => {
             automated Grad-CAM heatmaps, PDF report generation, and patient portal access.
           </p>
 
-          {/* Clinical Metrics */}
-          <div className="hero-metrics">
-            <div className="metric-card">
-              <div className="metric-value">96.91%</div>
-              <div className="metric-label">Model Accuracy</div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-value">99.75%</div>
-              <div className="metric-label">ROC-AUC Score</div>
-            </div>
+          {/* Dynamic Hospital Workflow Showcase Carousel */}
+          <div className="workflow-showcase-container">
+            {WORKFLOW_STEPS.map((step) => {
+              const IconComp = step.icon;
+              const isActive = activeStep === step.id;
+              return (
+                <div
+                  key={step.id}
+                  className={`workflow-card ${isActive ? 'active' : ''}`}
+                  onClick={() => setActiveStep(step.id)}
+                >
+                  <div className="workflow-card-icon">
+                    <IconComp className="w-5 h-5" />
+                  </div>
+                  <div className="workflow-card-text">
+                    <div className="workflow-card-title">{step.title}</div>
+                    <div className="workflow-card-desc">{step.desc}</div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
