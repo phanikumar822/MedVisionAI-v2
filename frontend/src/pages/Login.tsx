@@ -51,18 +51,14 @@ const Login = () => {
         <div className="auth-card">
           <div className="content">
 
-            {/* Glowing Brand Header with Animated Retina Laser Scanner */}
+            {/* Clean Brand Header */}
             <div className="brand-header">
               <div className="eye-scanner-icon">
                 <div className="iris-pulse"></div>
                 <div className="scanner-beam"></div>
               </div>
-              <h2 className="brand-title">
-                MEDVISION <span className="ai-badge">AI</span>
-              </h2>
-              <div className="badge-pill">
-                AI-Assisted Diabetic Retinopathy Platform
-              </div>
+              <h2 className="brand-title">MEDVISION AI</h2>
+              <p className="subtitle">Screen. Explain. Share. Understand.</p>
             </div>
 
             {/* Mode Switcher Buttons: Doctor / Admin vs Patient */}

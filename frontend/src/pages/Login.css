@@ -61,13 +61,13 @@
   transition: 0s;
 }
 
-/* === ENHANCED FUTURISTIC CARD BORDER & SHADOW === */
+/* === CLEAN FUTURISTIC CARD BORDER & SHADOW === */
 .auth-card {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 440px;
+  width: 420px;
   background: linear-gradient(145deg, rgba(12, 18, 48, 0.96), rgba(7, 11, 30, 0.98)) padding-box,
               linear-gradient(135deg, #00d4ff, #0066ff, #00f2fe, #00d4ff) border-box;
   border: 2px solid transparent;
@@ -76,8 +76,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 38px 36px;
-  border-radius: 20px;
+  padding: 35px 35px;
+  border-radius: 18px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8),
               0 0 50px rgba(0, 212, 255, 0.35),
               inset 0 0 25px rgba(0, 212, 255, 0.08);
@@ -93,19 +93,19 @@
   gap: 18px;
 }
 
-/* === BRAND HEADER & FUTURISTIC RETINA SCANNER ICON === */
+/* === BRAND HEADER & RETINA SCANNER ICON === */
 .brand-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
 }
 
 .eye-scanner-icon {
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 2px solid #00d4ff;
   display: flex;
@@ -116,8 +116,8 @@
 }
 
 .iris-pulse {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: radial-gradient(circle, #00f2fe 0%, #0066ff 100%);
   box-shadow: 0 0 12px #00f2fe;
@@ -146,39 +146,22 @@
 }
 
 .brand-title {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: 800;
   letter-spacing: 2px;
-  background: linear-gradient(135deg, #ffffff 20%, #00d4ff 60%, #0066ff 100%);
+  background: linear-gradient(135deg, #00d4ff, #0099ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
   margin: 0;
 }
 
-.ai-badge {
-  background: linear-gradient(135deg, #00d4ff, #0066ff);
-  -webkit-text-fill-color: #ffffff;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 0.7em;
-  letter-spacing: 1px;
-  box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
-}
-
-.badge-pill {
-  background: rgba(0, 212, 255, 0.08);
-  border: 1px solid rgba(0, 212, 255, 0.25);
-  color: #8ea5db;
-  font-size: 0.76em;
-  font-weight: 500;
-  padding: 4px 14px;
-  border-radius: 20px;
-  letter-spacing: 0.5px;
+.subtitle {
+  color: #7a8ab8;
+  font-size: 0.85em;
+  text-align: center;
 }
 
 /* === ROLE TOGGLE === */
