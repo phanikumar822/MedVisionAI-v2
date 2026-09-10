@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, CheckCircle2, Sparkles, Activity, MessageSquare } from 'lucide-react';
+import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, CheckCircle2, Sparkles, Activity, MessageSquare, Sun, Moon } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
   const [mode, setMode] = useState<'doctor' | 'patient'>('doctor');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
+  });
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('theme', nextTheme);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +47,7 @@ const Login = () => {
   };
 
   return (
-    <div className="dribbble-theme-container">
+    <div className={`dribbble-theme-container ${theme === 'dark' ? 'dark-theme' : ''}`}>
       
       {/* Elegant Header */}
       <header className="dribbble-navbar">
@@ -50,6 +59,26 @@ const Login = () => {
         </div>
 
         <div className="nav-right-actions">
+          {/* Light / Dark Mode Switcher */}
+          <button
+            type="button"
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+          >
+            {theme === 'light' ? (
+              <>
+                <Moon className="w-4 h-4 text-slate-700" />
+                <span>Dark Mode</span>
+              </>
+            ) : (
+              <>
+                <Sun className="w-4 h-4 text-amber-400" />
+                <span>Light Mode</span>
+              </>
+            )}
+          </button>
+
           <span className="system-status-badge">
             <span className="status-dot"></span> System Active v2.0
           </span>
@@ -216,7 +245,7 @@ const Login = () => {
               {/* Floating Overlay Badge */}
               <div className="floating-portal-badge">
                 <div className="badge-icon-wrap">
-                  {mode === 'doctor' ? <Activity className="w-4 h-4 text-blue-500" /> : <MessageSquare className="w-4 h-4 text-emerald-500" />}
+                  {mode === 'doctor' ? <Activity className="w-4 h-4 text-pink-500" /> : <MessageSquare className="w-4 h-4 text-emerald-500" />}
                 </div>
                 <div className="badge-content-text">
                   <span className="badge-title">{mode === 'doctor' ? 'Clinical AI Workspace' : 'Patient Portal App'}</span>
@@ -235,5 +264,6 @@ const Login = () => {
 };
 
 export default Login;
+
 
 
