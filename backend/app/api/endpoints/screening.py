@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status
 from sqlalchemy.orm import Session
+from datetime import datetime
 from app.database.session import get_db
 from app.models.user import User, UserRole
 from app.models.screening import Screening
@@ -14,6 +15,34 @@ router = APIRouter()
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+def path_to_url(path: str | None) -> str | None:
+    if not path:
+        return None
+    norm = path.replace("\\", "/")
+    if norm.startswith("uploads/"):
+        return f"http://localhost:8000/{norm}"
+    return f"http://localhost:8000/uploads/{norm}"
+
+@router.get("/stats")
+def get_screening_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role([UserRole.HEALTHCARE_WORKER, UserRole.ADMIN]))
+):
+    now = datetime.now()
+    today_start = datetime(now.year, now.month, now.day, 0, 0, 0)
+    
+    total = db.query(Screening).count()
+    today_count = db.query(Screening).filter(Screening.created_at >= today_start).count()
+    dr_count = db.query(Screening).filter(Screening.prediction == "DR PRESENT").count()
+    no_dr_count = db.query(Screening).filter(Screening.prediction == "NO DR").count()
+    
+    return {
+        "total_screenings": total,
+        "screenings_today": today_count,
+        "dr_present_count": dr_count,
+        "no_dr_count": no_dr_count
+    }
 
 @router.post("/", response_model=dict)
 def screen_image(
@@ -71,10 +100,14 @@ def screen_image(
             "probability_no_dr": new_screening.probability_no_dr,
             "confidence": new_screening.confidence,
             "risk_level": new_screening.risk_level,
-            "recommendation": new_screening.recommendation
+            "recommendation": new_screening.recommendation,
+            "image_url": path_to_url(new_screening.image_path),
+            "heatmap_url": path_to_url(new_screening.heatmap_path)
         }
         
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        print("Screening exception:", e)
         raise HTTPException(status_code=500, detail="Inference failed")
+
