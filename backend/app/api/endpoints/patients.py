@@ -165,16 +165,9 @@ def export_patients_excel(
     from fastapi.responses import Response
     from app.models.screening import Screening
 
-    patients = db.query(Patient).all()
-
     wb = Workbook()
-    ws = wb.active
-    ws.title = "Patient Clinical Directory"
 
-    # Ensure grid lines are visible
-    ws.views.sheetView[0].showGridLines = True
-
-    # Styling definitions
+    # Shared Styles
     font_header = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
     fill_header = PatternFill(start_color="C85A32", end_color="C85A32", fill_type="solid")
     align_header = Alignment(horizontal="center", vertical="center", wrap_text=True)
@@ -188,7 +181,116 @@ def export_patients_excel(
     fill_nodr = PatternFill(start_color="D1FAE5", end_color="D1FAE5", fill_type="solid")
     font_nodr = Font(name="Calibri", size=11, bold=True, color="065F46")
 
-    headers = [
+    # =========================================================================
+    # SHEET 1: ALL SCREENING OUTPUTS (PRIMARY SHEET)
+    # =========================================================================
+    ws1 = wb.active
+    ws1.title = "All Screening Outputs"
+    ws1.views.sheetView[0].showGridLines = True
+
+    headers_screenings = [
+        "Screening Reference",
+        "Date & Time (UTC)",
+        "Patient Access Code",
+        "Patient Name",
+        "Patient Email",
+        "Diagnostic Finding",
+        "Model Confidence",
+        "DR Risk Score",
+        "Normal Score",
+        "Assessed Risk Level",
+        "Grok AI Clinical Context Analysis",
+        "Recommended Clinical Management",
+        "Retinal Scan Image Path",
+        "Grad-CAM Heatmap Image Path"
+    ]
+
+    ws1.append(headers_screenings)
+    ws1.row_dimensions[1].height = 28
+
+    for col_num in range(1, len(headers_screenings) + 1):
+        cell = ws1.cell(row=1, column=col_num)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.alignment = align_header
+        cell.border = box_border
+
+    # Fetch ALL screening outputs, newest first
+    all_screenings = db.query(Screening).order_by(Screening.created_at.desc()).all()
+
+    for s in all_screenings:
+        patient = s.patient
+        patient_name = f"{patient.first_name} {patient.last_name}" if patient else "N/A"
+        patient_code = patient.patient_access_id if patient else "N/A"
+        patient_email = patient.email if patient else "N/A"
+        date_str = s.created_at.strftime('%Y-%m-%d %H:%M:%S') if s.created_at else "N/A"
+        
+        prob_dr = getattr(s, 'probability_dr', s.confidence if s.prediction == "DR PRESENT" else 1 - s.confidence) or 0.0
+        prob_no_dr = getattr(s, 'probability_no_dr', 1 - s.confidence if s.prediction == "DR PRESENT" else s.confidence) or 0.0
+        ai_ctx = getattr(s, 'ai_context', '') or ""
+
+        row_data = [
+            s.screening_id,
+            date_str,
+            patient_code,
+            patient_name,
+            patient_email,
+            s.prediction,
+            f"{s.confidence * 100:.1f}%",
+            f"{prob_dr * 100:.1f}%",
+            f"{prob_no_dr * 100:.1f}%",
+            s.risk_level,
+            ai_ctx,
+            s.recommendation,
+            s.image_path or "",
+            s.heatmap_path or ""
+        ]
+
+        ws1.append(row_data)
+        current_row = ws1.max_row
+        ws1.row_dimensions[current_row].height = 24
+
+        # Highlight Finding Column (Col 6)
+        finding_cell = ws1.cell(row=current_row, column=6)
+        if s.prediction == "DR PRESENT":
+            finding_cell.fill = fill_dr
+            finding_cell.font = font_dr
+        elif s.prediction == "NO DR":
+            finding_cell.fill = fill_nodr
+            finding_cell.font = font_nodr
+
+        for col_num in range(1, len(headers_screenings) + 1):
+            cell = ws1.cell(row=current_row, column=col_num)
+            cell.border = box_border
+            if col_num in [11, 12]:  # Wrap text for long Grok context & recommendation
+                cell.alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+            elif col_num in [1, 2, 3, 6, 7, 8, 9, 10]:
+                cell.alignment = Alignment(horizontal="center", vertical="center")
+            else:
+                cell.alignment = Alignment(horizontal="left", vertical="center")
+
+    for col in ws1.columns:
+        max_len = 0
+        col_letter = get_column_letter(col[0].column)
+        for cell in col:
+            val_str = str(cell.value or '')
+            if len(val_str) > max_len:
+                max_len = len(val_str)
+        # Give long text columns comfortable fixed width
+        if col_letter in ['K', 'L']:
+            ws1.column_dimensions[col_letter].width = 45
+        elif col_letter in ['M', 'N']:
+            ws1.column_dimensions[col_letter].width = 35
+        else:
+            ws1.column_dimensions[col_letter].width = min(max(max_len + 4, 12), 40)
+
+    # =========================================================================
+    # SHEET 2: PATIENT DIRECTORY SUMMARY
+    # =========================================================================
+    ws2 = wb.create_sheet(title="Patient Directory Summary")
+    ws2.views.sheetView[0].showGridLines = True
+
+    headers_patients = [
         "Patient ID",
         "Patient Access Code",
         "Full Name",
@@ -196,31 +298,29 @@ def export_patients_excel(
         "Phone Number",
         "Portal Username",
         "Account Status",
-        "Total Screenings",
+        "Total Screenings Recorded",
         "Latest Screening ID",
-        "Latest Diagnostic Finding",
-        "Confidence Score",
-        "Assessed Risk Level",
-        "Latest Clinical Recommendation"
+        "Latest Finding",
+        "Latest Confidence",
+        "Latest Risk Level"
     ]
 
-    ws.append(headers)
+    ws2.append(headers_patients)
+    ws2.row_dimensions[1].height = 28
 
-    # Apply Header Styles
-    ws.row_dimensions[1].height = 28
-    for col_num in range(1, len(headers) + 1):
-        cell = ws.cell(row=1, column=col_num)
+    for col_num in range(1, len(headers_patients) + 1):
+        cell = ws2.cell(row=1, column=col_num)
         cell.font = font_header
         cell.fill = fill_header
         cell.alignment = align_header
         cell.border = box_border
 
-    # Data Rows
+    patients = db.query(Patient).all()
     for p in patients:
-        screenings = db.query(Screening).filter(Screening.patient_id == p.id).order_by(Screening.created_at.desc()).all()
-        latest = screenings[0] if screenings else None
+        p_screenings = db.query(Screening).filter(Screening.patient_id == p.id).order_by(Screening.created_at.desc()).all()
+        latest = p_screenings[0] if p_screenings else None
 
-        row_data = [
+        row_data_p = [
             p.id,
             p.patient_access_id,
             f"{p.first_name} {p.last_name}",
@@ -228,44 +328,41 @@ def export_patients_excel(
             p.phone or "",
             p.user.username if p.user else "",
             "Active" if (p.user and p.user.hashed_password) else "Pending Activation",
-            len(screenings),
+            len(p_screenings),
             latest.screening_id if latest else "N/A",
             latest.prediction if latest else "N/A",
             f"{latest.confidence * 100:.1f}%" if latest else "N/A",
-            latest.risk_level if latest else "N/A",
-            latest.recommendation if latest else "N/A"
+            latest.risk_level if latest else "N/A"
         ]
 
-        ws.append(row_data)
-        current_row = ws.max_row
-        ws.row_dimensions[current_row].height = 22
+        ws2.append(row_data_p)
+        current_row_2 = ws2.max_row
+        ws2.row_dimensions[current_row_2].height = 22
 
-        # Highlight Finding Column (Col 10)
-        finding_cell = ws.cell(row=current_row, column=10)
+        finding_cell_2 = ws2.cell(row=current_row_2, column=10)
         if latest and latest.prediction == "DR PRESENT":
-            finding_cell.fill = fill_dr
-            finding_cell.font = font_dr
+            finding_cell_2.fill = fill_dr
+            finding_cell_2.font = font_dr
         elif latest and latest.prediction == "NO DR":
-            finding_cell.fill = fill_nodr
-            finding_cell.font = font_nodr
+            finding_cell_2.fill = fill_nodr
+            finding_cell_2.font = font_nodr
 
-        for col_num in range(1, len(headers) + 1):
-            cell = ws.cell(row=current_row, column=col_num)
+        for col_num in range(1, len(headers_patients) + 1):
+            cell = ws2.cell(row=current_row_2, column=col_num)
             cell.border = box_border
             if col_num in [1, 2, 7, 8, 9, 11, 12]:
                 cell.alignment = Alignment(horizontal="center", vertical="center")
             else:
                 cell.alignment = Alignment(horizontal="left", vertical="center")
 
-    # Auto-fit Column Widths
-    for col in ws.columns:
+    for col in ws2.columns:
         max_len = 0
         col_letter = get_column_letter(col[0].column)
         for cell in col:
             val_str = str(cell.value or '')
             if len(val_str) > max_len:
                 max_len = len(val_str)
-        ws.column_dimensions[col_letter].width = min(max(max_len + 4, 12), 50)
+        ws2.column_dimensions[col_letter].width = min(max(max_len + 4, 12), 40)
 
     # Save to BytesIO stream
     output = io.BytesIO()
@@ -275,6 +372,7 @@ def export_patients_excel(
     return Response(
         content=output.getvalue(),
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": "attachment; filename=MedVisionAI_Clinical_Patients_Export.xlsx"}
+        headers={"Content-Disposition": "attachment; filename=MedVisionAI_All_Screening_Outputs.xlsx"}
     )
+
 
