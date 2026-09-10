@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2 } from 'lucide-react';
+import { Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, Download } from 'lucide-react';
 
 interface Patient { id: number; name: string; patient_access_id: string; email: string; username: string; }
 interface ScreeningResult { id: number; screening_id: string; prediction: string; confidence: number; risk_level: string; recommendation: string; }
@@ -85,6 +85,22 @@ const WorkerDashboard = () => {
       }
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to delete patient.');
+    }
+  };
+
+  const handleExportCSV = async () => {
+    try {
+      const res = await api.get('/patients/export/csv', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'MedVisionAI_Patients_Export.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      alert('Failed to export CSV data.');
     }
   };
 
@@ -184,9 +200,14 @@ const WorkerDashboard = () => {
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center">
               <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><Users className="w-5 h-5 text-blue-500" /> Registered Patients</h2>
-              <button onClick={() => setTab('new-patient')} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                <UserPlus className="w-4 h-4" /> Add Patient
-              </button>
+              <div className="flex gap-2">
+                <button onClick={handleExportCSV} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition">
+                  <Download className="w-4 h-4" /> Export Data (CSV)
+                </button>
+                <button onClick={() => setTab('new-patient')} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                  <UserPlus className="w-4 h-4" /> Add Patient
+                </button>
+              </div>
             </div>
             <table className="min-w-full divide-y divide-slate-200">
               <thead className="bg-slate-50">

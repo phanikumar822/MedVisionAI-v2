@@ -150,3 +150,62 @@ def delete_patient(
 
     db.commit()
     return {"message": "Patient and all associated records deleted successfully"}
+
+
+@router.get("/export/csv")
+def export_patients_csv(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role([UserRole.HEALTHCARE_WORKER, UserRole.ADMIN]))
+):
+    import csv
+    import io
+    from fastapi.responses import Response
+    from app.models.screening import Screening
+
+    patients = db.query(Patient).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # CSV Header
+    writer.writerow([
+        "Patient ID",
+        "Patient Access Code",
+        "Full Name",
+        "Email",
+        "Phone",
+        "Portal Username",
+        "Account Active",
+        "Total Screenings",
+        "Latest Screening ID",
+        "Latest Prediction",
+        "Latest Confidence",
+        "Latest Risk Level",
+        "Latest Recommendation"
+    ])
+
+    for p in patients:
+        screenings = db.query(Screening).filter(Screening.patient_id == p.id).order_by(Screening.created_at.desc()).all()
+        latest = screenings[0] if screenings else None
+
+        writer.writerow([
+            p.id,
+            p.patient_access_id,
+            f"{p.first_name} {p.last_name}",
+            p.email or "",
+            p.phone or "",
+            p.user.username if p.user else "",
+            "Yes" if (p.user and p.user.hashed_password) else "Pending Activation",
+            len(screenings),
+            latest.screening_id if latest else "N/A",
+            latest.prediction if latest else "N/A",
+            f"{latest.confidence * 100:.1f}%" if latest else "N/A",
+            latest.risk_level if latest else "N/A",
+            latest.recommendation if latest else "N/A"
+        ])
+
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=MedVisionAI_Patients_Export.csv"}
+    )

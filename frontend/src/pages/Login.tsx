@@ -1,83 +1,114 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { api } from '../services/api';
 import { useNavigate } from 'react-router-dom';
-import { Eye } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import './Login.css';
 
 const Login = () => {
+  const [mode, setMode] = useState<'doctor' | 'patient'>('doctor');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
-    try {
-      const formData = new URLSearchParams();
-      formData.append('username', username);
-      formData.append('password', password);
 
-      const res = await api.post('/auth/login', formData);
-      await login(res.data.access_token);
+    try {
+      await login(username, password);
+      // Determine redirection based on login profile response
+      const meRes = await fetch('/api/v1/auth/me', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      const userData = await meRes.json();
       
-      const role = JSON.parse(atob(res.data.access_token.split('.')[1])).role;
-      
-      if (role === 'PATIENT') navigate('/patient');
-      else if (role === 'HEALTHCARE_WORKER') navigate('/worker');
-      else if (role === 'SPECIALIST') navigate('/specialist');
-      else navigate('/worker'); // fallback for admin
-    } catch (error) {
-      alert('Login failed. Please check credentials.');
+      if (userData.role === 'PATIENT') {
+        navigate('/patient');
+      } else {
+        // Doctor or Admin role goes to Doctor/Admin portal
+        navigate('/worker');
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Invalid username or password. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  // Generate 70 grid spans for interactive background
+  const gridSpans = Array.from({ length: 75 });
+
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="bg-white max-w-md w-full p-8 rounded-2xl shadow-lg border border-slate-100 text-center">
-        <div className="flex justify-center mb-6">
-          <Eye className="w-12 h-12 text-blue-600" />
+    <div className="auth-wrapper">
+      <section className="auth-section">
+        {gridSpans.map((_, i) => (
+          <span key={i}></span>
+        ))}
+
+        <div className="auth-card">
+          <div className="content">
+            <h2>MedVisionAI</h2>
+            <p className="subtitle">Screen. Explain. Share. Understand.</p>
+
+            {/* Mode Switcher Buttons: Doctor / Admin vs Patient */}
+            <div className="role-toggle">
+              <button
+                type="button"
+                className={`role-btn ${mode === 'doctor' ? 'active' : ''}`}
+                onClick={() => { setMode('doctor'); setError(''); }}
+              >
+                🩺 Doctor / Admin
+              </button>
+              <button
+                type="button"
+                className={`role-btn ${mode === 'patient' ? 'active' : ''}`}
+                onClick={() => { setMode('patient'); setError(''); }}
+              >
+                👤 Patient
+              </button>
+            </div>
+
+            {error && <div className="error-banner">{error}</div>}
+
+            <form onSubmit={handleSubmit}>
+              <div className="inputBox">
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  placeholder=" "
+                />
+                <i>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</i>
+              </div>
+
+              <div className="inputBox">
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder=" "
+                />
+                <i>Password</i>
+              </div>
+
+              <button type="submit" className="submit-btn" disabled={loading}>
+                {loading ? 'Authenticating…' : `Login as ${mode === 'doctor' ? 'Doctor / Admin' : 'Patient'}`}
+              </button>
+            </form>
+
+            <p className="hint-text">
+              {mode === 'doctor'
+                ? '🔒 Admin credentials allow system-wide access and CSV data exports.'
+                : '🔑 Use the username & password set via your email activation link.'}
+            </p>
+          </div>
         </div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">Sign in to MedVisionAI</h2>
-        <p className="text-slate-500 mb-8 text-sm">Secure online screening platform</p>
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <input 
-              type="text" 
-              placeholder="Username" 
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
-            />
-          </div>
-          <div>
-            <input 
-              type="password" 
-              placeholder="Password" 
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
-            />
-          </div>
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium p-3 rounded-lg transition shadow-sm disabled:bg-slate-400"
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-
-        <p className="text-sm text-slate-500 mt-4">
-          Contact your system administrator if you have forgotten your credentials.
-        </p>
-      </div>
+      </section>
     </div>
   );
 };
