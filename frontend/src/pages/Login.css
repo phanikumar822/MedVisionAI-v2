@@ -617,6 +617,55 @@
   color: #a1a1aa;
 }
 
+/* Checkmark Tick Pop Animation */
+@keyframes checkmarkTickPop {
+  0% {
+    transform: scale(0) rotate(-25deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.28) rotate(6deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.check-icon-box, .tick-anim-box {
+  animation: checkmarkTickPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* macOS App Launch & Drop Expansion Animation for Chatbot */
+@keyframes macAppLaunch {
+  0% {
+    opacity: 0;
+    transform: scale(0.18) translateY(60px) translateX(20px);
+    transform-origin: bottom right;
+    filter: blur(12px);
+    border-radius: 36px;
+  }
+  70% {
+    opacity: 0.96;
+    transform: scale(1.02) translateY(-4px) translateX(0px);
+    transform-origin: bottom right;
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0) translateX(0);
+    transform-origin: bottom right;
+    filter: blur(0px);
+    border-radius: 20px;
+  }
+}
+
+.mac-chat-window {
+  animation: macAppLaunch 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
 /* Responsive Media Queries */
 @media (max-width: 1024px) {
   .dribbble-hero-section {
@@ -638,6 +687,7 @@
     padding: 16px 24px;
   }
 }
+
 
 
 
