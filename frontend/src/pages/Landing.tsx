@@ -69,7 +69,7 @@ const Landing = () => {
             <FeatureCard 
               icon={<Users className="w-6 h-6 text-[#D97706]" />}
               title="Patient Record Management"
-              description="Clinical workers can register new patients and export patient records in CSV format."
+              description="Clinical workers can register new patients and export patient records in Excel (.xlsx) format."
             />
             <FeatureCard 
               icon={<FileText className="w-6 h-6 text-[#C85A32]" />}

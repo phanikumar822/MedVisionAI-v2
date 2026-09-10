@@ -121,19 +121,19 @@ const WorkerDashboard = () => {
     }
   };
 
-  const handleExportCSV = async () => {
+  const handleExportExcel = async () => {
     try {
-      const res = await api.get('/patients/export/csv', { responseType: 'blob' });
-      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }));
+      const res = await api.get('/patients/export/excel', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'MedVisionAI_Patients_Export.csv');
+      link.setAttribute('download', 'MedVisionAI_Clinical_Patients_Export.xlsx');
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch {
-      alert('Failed to export CSV data.');
+      alert('Failed to export Excel data.');
     }
   };
 
@@ -383,8 +383,8 @@ const WorkerDashboard = () => {
             <div className="p-6 border-b border-[#EBE5DD] flex justify-between items-center">
               <h2 className="text-xl font-extrabold flex items-center gap-2 text-[#23211E]"><Users className="w-5 h-5 text-[#C85A32]" /> Patient Directory</h2>
               <div className="flex gap-2">
-                <button onClick={handleExportCSV} className="flex items-center gap-2 bg-[#1E1E1E] hover:bg-[#333333] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
-                  <Download className="w-4 h-4" /> Export CSV
+                <button onClick={handleExportExcel} className="flex items-center gap-2 bg-[#1E1E1E] hover:bg-[#333333] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
+                  <Download className="w-4 h-4 text-emerald-400" /> Export Excel (.xlsx)
                 </button>
                 <button onClick={() => setTab('new-patient')} className="flex items-center gap-2 bg-[#C85A32] hover:bg-[#B34E2B] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm">
                   <UserPlus className="w-4 h-4" /> Add Patient

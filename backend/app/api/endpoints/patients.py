@@ -152,60 +152,129 @@ def delete_patient(
     return {"message": "Patient and all associated records deleted successfully"}
 
 
+@router.get("/export/excel")
 @router.get("/export/csv")
-def export_patients_csv(
+def export_patients_excel(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_role([UserRole.HEALTHCARE_WORKER, UserRole.ADMIN]))
 ):
-    import csv
     import io
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
     from fastapi.responses import Response
     from app.models.screening import Screening
 
     patients = db.query(Patient).all()
 
-    output = io.StringIO()
-    writer = csv.writer(output)
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Patient Clinical Directory"
 
-    # CSV Header
-    writer.writerow([
+    # Ensure grid lines are visible
+    ws.views.sheetView[0].showGridLines = True
+
+    # Styling definitions
+    font_header = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
+    fill_header = PatternFill(start_color="C85A32", end_color="C85A32", fill_type="solid")
+    align_header = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    border_thin = Side(border_style="thin", color="D1D5DB")
+    box_border = Border(left=border_thin, right=border_thin, top=border_thin, bottom=border_thin)
+
+    fill_dr = PatternFill(start_color="FFE4E6", end_color="FFE4E6", fill_type="solid")
+    font_dr = Font(name="Calibri", size=11, bold=True, color="991B1B")
+
+    fill_nodr = PatternFill(start_color="D1FAE5", end_color="D1FAE5", fill_type="solid")
+    font_nodr = Font(name="Calibri", size=11, bold=True, color="065F46")
+
+    headers = [
         "Patient ID",
         "Patient Access Code",
         "Full Name",
-        "Email",
-        "Phone",
+        "Email Address",
+        "Phone Number",
         "Portal Username",
-        "Account Active",
+        "Account Status",
         "Total Screenings",
         "Latest Screening ID",
-        "Latest Prediction",
-        "Latest Confidence",
-        "Latest Risk Level",
-        "Latest Recommendation"
-    ])
+        "Latest Diagnostic Finding",
+        "Confidence Score",
+        "Assessed Risk Level",
+        "Latest Clinical Recommendation"
+    ]
 
+    ws.append(headers)
+
+    # Apply Header Styles
+    ws.row_dimensions[1].height = 28
+    for col_num in range(1, len(headers) + 1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.alignment = align_header
+        cell.border = box_border
+
+    # Data Rows
     for p in patients:
         screenings = db.query(Screening).filter(Screening.patient_id == p.id).order_by(Screening.created_at.desc()).all()
         latest = screenings[0] if screenings else None
 
-        writer.writerow([
+        row_data = [
             p.id,
             p.patient_access_id,
             f"{p.first_name} {p.last_name}",
             p.email or "",
             p.phone or "",
             p.user.username if p.user else "",
-            "Yes" if (p.user and p.user.hashed_password) else "Pending Activation",
+            "Active" if (p.user and p.user.hashed_password) else "Pending Activation",
             len(screenings),
             latest.screening_id if latest else "N/A",
             latest.prediction if latest else "N/A",
             f"{latest.confidence * 100:.1f}%" if latest else "N/A",
             latest.risk_level if latest else "N/A",
             latest.recommendation if latest else "N/A"
-        ])
+        ]
+
+        ws.append(row_data)
+        current_row = ws.max_row
+        ws.row_dimensions[current_row].height = 22
+
+        # Highlight Finding Column (Col 10)
+        finding_cell = ws.cell(row=current_row, column=10)
+        if latest and latest.prediction == "DR PRESENT":
+            finding_cell.fill = fill_dr
+            finding_cell.font = font_dr
+        elif latest and latest.prediction == "NO DR":
+            finding_cell.fill = fill_nodr
+            finding_cell.font = font_nodr
+
+        for col_num in range(1, len(headers) + 1):
+            cell = ws.cell(row=current_row, column=col_num)
+            cell.border = box_border
+            if col_num in [1, 2, 7, 8, 9, 11, 12]:
+                cell.alignment = Alignment(horizontal="center", vertical="center")
+            else:
+                cell.alignment = Alignment(horizontal="left", vertical="center")
+
+    # Auto-fit Column Widths
+    for col in ws.columns:
+        max_len = 0
+        col_letter = get_column_letter(col[0].column)
+        for cell in col:
+            val_str = str(cell.value or '')
+            if len(val_str) > max_len:
+                max_len = len(val_str)
+        ws.column_dimensions[col_letter].width = min(max(max_len + 4, 12), 50)
+
+    # Save to BytesIO stream
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
 
     return Response(
         content=output.getvalue(),
-        media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=MedVisionAI_Patients_Export.csv"}
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=MedVisionAI_Clinical_Patients_Export.xlsx"}
     )
+

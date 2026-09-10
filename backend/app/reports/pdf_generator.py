@@ -187,12 +187,12 @@ def generate_pdf_report(screening: Screening, patient: Patient) -> str:
     ai_context_text = getattr(screening, 'ai_context', None)
     if not ai_context_text:
         ai_context_text = (
-            f"Grok Clinical AI Context: Deep learning classifier evaluated retinal fundus morphology with {screening.confidence*100:.1f}% confidence. "
+            f"AI Analysis: Deep learning classifier evaluated retinal fundus morphology with {screening.confidence*100:.1f}% confidence. "
             f"The Grad-CAM neural attention visualizer highlighted key micro-vascular feature regions across macular and optic disk quadrants. "
             f"Clinical correlation and comprehensive ophthalmoscopic evaluation are recommended."
         )
 
-    story.append(Paragraph("<b>AI CLINICAL ANALYSIS & GROK MODEL CONTEXT</b>", style_section_title))
+    story.append(Paragraph("<b>AI CLINICAL ANALYSIS</b>", style_section_title))
     ai_box_data = [[Paragraph(ai_context_text, style_ai_context)]]
     ai_box_table = Table(ai_box_data, colWidths=[540])
     ai_box_table.setStyle(TableStyle([

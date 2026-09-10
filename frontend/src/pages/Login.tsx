@@ -122,7 +122,7 @@ const Login = () => {
                   <div className="check-icon-box warm">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <span>Exportable PDF patient reports & CSV database download</span>
+                  <span>Exportable PDF patient reports & Excel (.xlsx) database download</span>
                 </div>
               </>
             ) : (
@@ -197,7 +197,7 @@ const Login = () => {
 
             <div className="cream-hint">
               {mode === 'doctor'
-                ? '🔒 Admin credentials (`medvision.admin`) provide complete system access & CSV data export.'
+                ? '🔒 Admin credentials (`medvision.admin`) provide complete system access & Excel data export.'
                 : '🔑 Patients sign in using credentials sent to their email.'}
             </div>
           </div>
