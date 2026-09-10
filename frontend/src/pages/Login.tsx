@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
 import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, CheckCircle2, Sparkles, Activity, MessageSquare, Sun, Moon } from 'lucide-react';
 import './Login.css';
 
@@ -28,19 +29,27 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(username, password);
-      const meRes = await fetch('/api/v1/auth/me', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      const formData = new URLSearchParams();
+      formData.append('username', username.trim());
+      formData.append('password', password);
+
+      const res = await api.post('/auth/login', formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
-      const userData = await meRes.json();
-      
+
+      const token = res.data.access_token;
+      await login(token);
+
+      const meRes = await api.get('/auth/me');
+      const userData = meRes.data;
+
       if (userData.role === 'PATIENT') {
         navigate('/patient');
       } else {
         navigate('/worker');
       }
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Invalid username or password. Please try again.');
+      setError(err.response?.data?.detail || err.message || 'Invalid username or password. Please try again.');
     } finally {
       setLoading(false);
     }
