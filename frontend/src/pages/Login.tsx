@@ -38,7 +38,7 @@ const Login = () => {
     }
   };
 
-  // Generate 70 grid spans for interactive background
+  // Generate 75 grid spans for interactive background
   const gridSpans = Array.from({ length: 75 });
 
   return (
@@ -50,8 +50,20 @@ const Login = () => {
 
         <div className="auth-card">
           <div className="content">
-            <h2>MedVisionAI</h2>
-            <p className="subtitle">Screen. Explain. Share. Understand.</p>
+
+            {/* Glowing Brand Header with Animated Retina Laser Scanner */}
+            <div className="brand-header">
+              <div className="eye-scanner-icon">
+                <div className="iris-pulse"></div>
+                <div className="scanner-beam"></div>
+              </div>
+              <h2 className="brand-title">
+                MEDVISION <span className="ai-badge">AI</span>
+              </h2>
+              <div className="badge-pill">
+                AI-Assisted Diabetic Retinopathy Platform
+              </div>
+            </div>
 
             {/* Mode Switcher Buttons: Doctor / Admin vs Patient */}
             <div className="role-toggle">

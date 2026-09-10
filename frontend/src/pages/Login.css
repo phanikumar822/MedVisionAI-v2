@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 .auth-wrapper {
   margin: 0;
@@ -9,7 +9,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #0a0e27;
+  background: #060919;
   overflow: hidden;
   position: relative;
   width: 100vw;
@@ -33,7 +33,7 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(#0a0e27, #00d4ff, #0099ff, #0a0e27);
+  background: linear-gradient(#060919, #00d4ff, #0066ff, #060919);
   animation: animateGrid 6s linear infinite;
 }
 
@@ -51,7 +51,7 @@
   display: block;
   width: calc(6.25vw - 2px);
   height: calc(6.25vw - 2px);
-  background: #0f1535;
+  background: #0b102b;
   z-index: 2;
   transition: 1.5s;
 }
@@ -61,23 +61,26 @@
   transition: 0s;
 }
 
+/* === ENHANCED FUTURISTIC CARD BORDER & SHADOW === */
 .auth-card {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 420px;
-  background: rgba(15, 21, 53, 0.95);
-  backdrop-filter: blur(12px);
+  width: 440px;
+  background: linear-gradient(145deg, rgba(12, 18, 48, 0.96), rgba(7, 11, 30, 0.98)) padding-box,
+              linear-gradient(135deg, #00d4ff, #0066ff, #00f2fe, #00d4ff) border-box;
+  border: 2px solid transparent;
+  backdrop-filter: blur(16px);
   z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 35px 35px;
-  border-radius: 16px;
-  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.6),
-              0 0 50px rgba(0, 212, 255, 0.25);
-  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 38px 36px;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8),
+              0 0 50px rgba(0, 212, 255, 0.35),
+              inset 0 0 25px rgba(0, 212, 255, 0.08);
 }
 
 .auth-card .content {
@@ -90,30 +93,99 @@
   gap: 18px;
 }
 
-.auth-card .content h2 {
-  font-size: 1.8em;
-  background: linear-gradient(135deg, #00d4ff, #0099ff);
+/* === BRAND HEADER & FUTURISTIC RETINA SCANNER ICON === */
+.brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.eye-scanner-icon {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #00d4ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5), inset 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+.iris-pulse {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00f2fe 0%, #0066ff 100%);
+  box-shadow: 0 0 12px #00f2fe;
+  animation: irisPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes irisPulse {
+  0% { transform: scale(0.85); opacity: 0.8; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.scanner-beam {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: #00f2fe;
+  box-shadow: 0 0 8px #00f2fe;
+  animation: scanBeam 2s ease-in-out infinite alternate;
+}
+
+@keyframes scanBeam {
+  0% { top: 15%; }
+  100% { top: 80%; }
+}
+
+.brand-title {
+  font-size: 2em;
+  font-weight: 800;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #ffffff 20%, #00d4ff 60%, #0066ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-transform: uppercase;
-  font-weight: 700;
+  text-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.ai-badge {
+  background: linear-gradient(135deg, #00d4ff, #0066ff);
+  -webkit-text-fill-color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.7em;
   letter-spacing: 1px;
-  margin-bottom: 4px;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
 }
 
-.auth-card .content .subtitle {
-  color: #7a8ab8;
-  font-size: 0.85em;
-  text-align: center;
-  margin-top: -12px;
+.badge-pill {
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  color: #8ea5db;
+  font-size: 0.76em;
+  font-weight: 500;
+  padding: 4px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
 }
 
-/* Doctor / Patient Mode Toggle */
+/* === ROLE TOGGLE === */
 .role-toggle {
   display: flex;
   width: 100%;
-  background: #151c3d;
+  background: #101636;
   border-radius: 12px;
   padding: 4px;
   border: 1px solid rgba(0, 212, 255, 0.2);
@@ -126,16 +198,16 @@
   border: none;
   color: #7a8ab8;
   font-weight: 600;
-  font-size: 0.9em;
+  font-size: 0.88em;
   border-radius: 8px;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .role-btn.active {
-  background: linear-gradient(135deg, #00d4ff, #0099ff);
+  background: linear-gradient(135deg, #00d4ff, #0066ff);
   color: #fff;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 4px 18px rgba(0, 212, 255, 0.4);
 }
 
 .auth-card .content form {
@@ -153,8 +225,8 @@
 .auth-card .content form .inputBox input {
   position: relative;
   width: 100%;
-  background: #1a2346;
-  border: 2px solid transparent;
+  background: #141b3d;
+  border: 1.5px solid rgba(0, 212, 255, 0.2);
   outline: none;
   padding: 20px 15px 8px;
   border-radius: 12px;
@@ -165,8 +237,9 @@
 }
 
 .auth-card .content form .inputBox input:focus {
-  border: 2px solid #00d4ff;
-  background: #1f2952;
+  border: 1.5px solid #00d4ff;
+  background: #1a234e;
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.3);
 }
 
 .auth-card .content form .inputBox i {
@@ -178,15 +251,15 @@
   color: #7a8ab8;
   transition: 0.3s;
   pointer-events: none;
-  font-size: 0.95em;
+  font-size: 0.9em;
 }
 
 .auth-card .content form .inputBox input:focus ~ i,
 .auth-card .content form .inputBox input:valid ~ i,
 .auth-card .content form .inputBox input:not(:placeholder-shown) ~ i {
-  top: 12px;
+  top: 10px;
   transform: translateY(0);
-  font-size: 0.75em;
+  font-size: 0.72em;
   color: #00d4ff;
   font-weight: 600;
 }
@@ -194,23 +267,23 @@
 .auth-card .content form .submit-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #00d4ff, #0099ff);
+  background: linear-gradient(135deg, #00d4ff, #0066ff);
   color: #fff;
   font-weight: 700;
-  font-size: 1em;
+  font-size: 0.95em;
   letter-spacing: 1px;
   cursor: pointer;
   border: none;
   border-radius: 12px;
-  margin-top: 5px;
+  margin-top: 4px;
   text-transform: uppercase;
   transition: 0.3s;
-  box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 212, 255, 0.35);
 }
 
 .auth-card .content form .submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4);
+  box-shadow: 0 15px 35px rgba(0, 212, 255, 0.5);
 }
 
 .auth-card .content form .submit-btn:disabled {
@@ -234,7 +307,7 @@
   color: #64748b;
   font-size: 0.78em;
   text-align: center;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 @media (max-width: 900px) {
