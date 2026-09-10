@@ -1,29 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, Activity, FileText, MessageSquare } from 'lucide-react';
+import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, CheckCircle2, Sparkles, Activity, MessageSquare } from 'lucide-react';
 import './Login.css';
-
-const WORKFLOW_STEPS = [
-  {
-    id: 0,
-    icon: Activity,
-    title: "AI Retinal Inference & Grad-CAM Heatmaps",
-    desc: "Instant deep learning classification for Diabetic Retinopathy with explainable lesion localization overlays."
-  },
-  {
-    id: 1,
-    icon: FileText,
-    title: "Automated Clinical Reports & SMTP Alerts",
-    desc: "Generate exportable PDF diagnostic summaries and deliver direct email notification links to patients."
-  },
-  {
-    id: 2,
-    icon: MessageSquare,
-    title: "Patient RAG Health Assistant & Portal",
-    desc: "Interactive medical AI chatbot backed by clinical RAG knowledge base for patient query resolution."
-  }
-];
 
 const Login = () => {
   const [mode, setMode] = useState<'doctor' | 'patient'>('doctor');
@@ -31,16 +10,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
   const { login } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % WORKFLOW_STEPS.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +20,6 @@ const Login = () => {
 
     try {
       await login(username, password);
-      // Determine redirection based on login profile response
       const meRes = await fetch('/api/v1/auth/me', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
@@ -58,7 +28,6 @@ const Login = () => {
       if (userData.role === 'PATIENT') {
         navigate('/patient');
       } else {
-        // Doctor or Admin role goes to Doctor/Admin portal
         navigate('/worker');
       }
     } catch (err: any) {
@@ -69,152 +38,215 @@ const Login = () => {
   };
 
   return (
-    <div className="split-auth-container">
-
-      {/* LEFT SIDE: Enterprise Clinical Hero Panel */}
-      <div className="auth-hero-panel">
-        <div className="hero-ambient-glow"></div>
-        <div className="hero-pattern-overlay"></div>
-
-        {/* Brand Header */}
-        <div className="hero-brand">
-          <div className="hero-brand-logo">
-            <Eye className="w-6 h-6 text-white" />
+    <div className="dribbble-theme-container">
+      
+      {/* Top Navbar */}
+      <header className="dribbble-navbar">
+        <div className="nav-brand">
+          <div className="nav-logo-box">
+            <Eye className="w-5 h-5 text-white" />
           </div>
-          <span className="hero-brand-name">
-            MedVision<span>AI</span>
+          <span className="nav-brand-text">MedVision<span>AI</span></span>
+        </div>
+
+        <nav className="nav-links">
+          <button type="button" className="nav-link-btn active">Explore</button>
+          <button type="button" className={`nav-link-btn ${mode === 'doctor' ? 'highlight' : ''}`} onClick={() => setMode('doctor')}>Doctor Portal</button>
+          <button type="button" className={`nav-link-btn ${mode === 'patient' ? 'highlight' : ''}`} onClick={() => setMode('patient')}>Patient Portal</button>
+          <button type="button" className="nav-link-btn">Clinical Suite</button>
+        </nav>
+
+        <div className="nav-right-actions">
+          <span className="system-status-badge">
+            <span className="status-dot"></span> System Active v2.0
           </span>
         </div>
+      </header>
 
-        {/* Hero Content */}
-        <div className="hero-content">
-          <div className="hero-badge">
-            <ShieldCheck className="w-4 h-4" /> Clinical Diagnostic System v2.0
-          </div>
-          <h1 className="hero-title">
-            Precision AI Screening for <span>Retinal Health</span>
-          </h1>
-          <p className="hero-description">
-            Empowering ophthalmologists & clinical workers with AI-driven Diabetic Retinopathy screening, 
-            automated Grad-CAM heatmaps, PDF report generation, and patient portal access.
-          </p>
-
-          {/* Dynamic Hospital Workflow Showcase Carousel */}
-          <div className="workflow-showcase-container">
-            {WORKFLOW_STEPS.map((step) => {
-              const IconComp = step.icon;
-              const isActive = activeStep === step.id;
-              return (
-                <div
-                  key={step.id}
-                  className={`workflow-card ${isActive ? 'active' : ''}`}
-                  onClick={() => setActiveStep(step.id)}
-                >
-                  <div className="workflow-card-icon">
-                    <IconComp className="w-5 h-5" />
-                  </div>
-                  <div className="workflow-card-text">
-                    <div className="workflow-card-title">{step.title}</div>
-                    <div className="workflow-card-desc">{step.desc}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Hero Footer */}
-        <div className="hero-footer">
-          <p className="hero-quote">
-            "Automated screening and explainable AI heatmaps help clinicians detect high-risk cases early and publish clear diagnostic reports."
-          </p>
-          <div className="hero-quote-author">
-            MedVisionAI Clinical Intelligence Suite
-          </div>
-        </div>
+      {/* Top Notice Banner */}
+      <div className="dribbble-top-banner">
+        <span className="banner-tag">🎉 ACTIVE SUITE</span>
+        <span className="banner-text">Clinical Retinal AI Screening v2.0 with Grad-CAM Heatmaps & RAG Assistant</span>
+        <span className="banner-action">Explore Features</span>
       </div>
 
-      {/* RIGHT SIDE: Clean Professional Form Panel */}
-      <div className="auth-form-panel">
-        <div className="form-card-box">
-
-          <div className="form-header">
-            <h2>Welcome back</h2>
-            <p>Select your access portal to sign in to your account</p>
-          </div>
-
-          {/* Segmented Control Switcher */}
-          <div className="role-segmented-control">
-            <div className={`role-segmented-pill ${mode === 'patient' ? 'patient' : ''}`}></div>
+      {/* Main Content Area */}
+      <main className="dribbble-hero-section">
+        
+        {/* LEFT COLUMN: Content & Form */}
+        <div className="hero-left-column">
+          
+          {/* Pill Switcher Toggle (Doctor vs Patient) */}
+          <div className="portal-pill-toggle">
+            <div className={`pill-glider ${mode === 'patient' ? 'slide-right' : ''}`}></div>
             <button
               type="button"
-              className={`role-tab-button ${mode === 'doctor' ? 'active' : ''}`}
+              className={`pill-tab ${mode === 'doctor' ? 'active' : ''}`}
               onClick={() => { setMode('doctor'); setError(''); }}
             >
-              <ShieldCheck className="w-4 h-4" /> Doctor / Admin
+              <ShieldCheck className="w-4 h-4" /> DOCTOR PORTAL
             </button>
             <button
               type="button"
-              className={`role-tab-button ${mode === 'patient' ? 'active' : ''}`}
+              className={`pill-tab ${mode === 'patient' ? 'active' : ''}`}
               onClick={() => { setMode('patient'); setError(''); }}
             >
-              <UserCheck className="w-4 h-4" /> Patient Portal
+              <UserCheck className="w-4 h-4" /> PATIENT PORTAL
             </button>
           </div>
 
-          {error && <div className="error-banner-box">{error}</div>}
+          {/* Dynamic Main Heading */}
+          <div className="hero-heading-container" key={mode}>
+            {mode === 'doctor' ? (
+              <h1 className="dribbble-hero-title">
+                Empowering clinicians with <span>AI Retinal Intelligence</span>
+              </h1>
+            ) : (
+              <h1 className="dribbble-hero-title">
+                Access your reports & <span>AI Health Assistant</span>
+              </h1>
+            )}
+            <p className="hero-subtext">
+              {mode === 'doctor' 
+                ? 'Deep learning diagnostic suite for Diabetic Retinopathy grading, instant Grad-CAM heatmap generation, and automated patient notifications.'
+                : 'Review your retinal scan diagnostic reports, download official clinical PDFs, and ask questions to your 24/7 AI Health Assistant.'}
+            </p>
+          </div>
 
-          {/* Form Container with Smooth Horizontal Slide Transition */}
-          <div className="auth-form-wrapper" key={mode}>
-            <form onSubmit={handleSubmit} className="clean-form">
-              <div className="input-field-group">
-                <label>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</label>
-                <div className="input-field-wrapper">
-                  <User className="w-5 h-5 input-icon" />
-                  <input
-                    type="text"
-                    className="clean-input"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder={mode === 'doctor' ? 'e.g. dr.screening' : 'Enter patient username'}
-                    required
-                  />
+          {/* Feature Checklist */}
+          <div className="hero-feature-checklist" key={`list-${mode}`}>
+            {mode === 'doctor' ? (
+              <>
+                <div className="feature-check-item">
+                  <div className="check-icon-box pink">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <span>Instant Diabetic Retinopathy classification & lesion detection</span>
+                </div>
+                <div className="feature-check-item">
+                  <div className="check-icon-box pink">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <span>Explainable Grad-CAM heatmaps for high-risk verification</span>
+                </div>
+                <div className="feature-check-item">
+                  <div className="check-icon-box pink">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <span>Export PDF clinical reports & Admin CSV data export</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="feature-check-item">
+                  <div className="check-icon-box blue">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <span>View official diagnostic reports & retina check summaries</span>
+                </div>
+                <div className="feature-check-item">
+                  <div className="check-icon-box blue">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <span>Consult 24/7 AI Medical Assistant backed by clinical RAG</span>
+                </div>
+                <div className="feature-check-item">
+                  <div className="check-icon-box blue">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <span>Secure account access via SMTP email notification link</span>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Inline Integrated Login Form */}
+          <div className="dribbble-form-card" key={`form-${mode}`}>
+            {error && <div className="error-banner-box">{error}</div>}
+
+            <form onSubmit={handleSubmit} className="dribbble-login-form">
+              <div className="form-row-group">
+                <div className="form-field">
+                  <label>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</label>
+                  <div className="field-input-box">
+                    <User className="w-4 h-4 field-icon" />
+                    <input
+                      type="text"
+                      className="field-input"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder={mode === 'doctor' ? 'e.g. dr.screening or medvision.admin' : 'Enter patient username'}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <label>Password</label>
+                  <div className="field-input-box">
+                    <Lock className="w-4 h-4 field-icon" />
+                    <input
+                      type="password"
+                      className="field-input"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter password"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="input-field-group">
-                <label>Password</label>
-                <div className="input-field-wrapper">
-                  <Lock className="w-5 h-5 input-icon" />
-                  <input
-                    type="password"
-                    className="clean-input"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter password"
-                    required
-                  />
-                </div>
+              <div className="form-action-row">
+                <button type="submit" className="dribbble-submit-btn" disabled={loading}>
+                  <Sparkles className="w-4 h-4" />
+                  {loading ? 'Authenticating...' : `Sign In to ${mode === 'doctor' ? 'Doctor Portal' : 'Patient Portal'}`}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
-
-              <button type="submit" className="submit-primary-btn" disabled={loading}>
-                {loading ? 'Authenticating...' : `Sign In to ${mode === 'doctor' ? 'Doctor Portal' : 'Patient Portal'}`}
-                <ArrowRight className="w-4 h-4" />
-              </button>
             </form>
 
-            <div className="security-hint-note">
+            <div className="dribbble-hint">
               {mode === 'doctor'
                 ? '🔒 Admin credentials (`medvision.admin`) grant full system access & CSV data export.'
-                : '🔑 Patients use the auto-generated username & password set via email link.'}
+                : '🔑 Patients sign in with credentials received via official email link.'}
             </div>
           </div>
 
         </div>
-      </div>
+
+        {/* RIGHT COLUMN: Dynamic Portal Image Showcase */}
+        <div className="hero-right-column">
+          <div className="hero-image-frame-card">
+            
+            {/* Display relevant image based on selected portal */}
+            <div className="image-wrapper" key={`img-${mode}`}>
+              <img
+                src={mode === 'doctor' ? '/assets/doctor_portal_hero.jpg' : '/assets/patient_portal_hero.jpg'}
+                alt={mode === 'doctor' ? 'Doctor Clinical AI Interface' : 'Patient Diagnostic Portal Interface'}
+                className="portal-showcase-img"
+              />
+
+              {/* Floating Overlay Badge */}
+              <div className="floating-portal-badge">
+                <div className="badge-icon-wrap">
+                  {mode === 'doctor' ? <Activity className="w-4 h-4 text-blue-500" /> : <MessageSquare className="w-4 h-4 text-emerald-500" />}
+                </div>
+                <div className="badge-content-text">
+                  <span className="badge-title">{mode === 'doctor' ? 'Clinical AI Workspace' : 'Patient Portal App'}</span>
+                  <span className="badge-subtitle">{mode === 'doctor' ? 'Grad-CAM DR Diagnostics' : 'RAG Health Chatbot'}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
 
     </div>
   );
 };
 
 export default Login;
+
