@@ -57,12 +57,6 @@ const Login = () => {
           </div>
           <span className="nav-brand-text">MedVision<span>AI</span></span>
         </div>
-
-        <div className="nav-right-actions">
-          <span className="system-status-badge">
-            <span className="status-dot"></span> Clinical Portal Active
-          </span>
-        </div>
       </header>
 
       {/* Main Content Area */}
