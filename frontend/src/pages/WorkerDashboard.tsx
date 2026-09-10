@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, Download, Sun, Moon, LogOut } from 'lucide-react';
+import { Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, Download, LogOut } from 'lucide-react';
 
 interface Patient { id: number; name: string; patient_access_id: string; email: string; username: string; }
 interface ScreeningResult { id: number; screening_id: string; prediction: string; confidence: number; risk_level: string; recommendation: string; }
@@ -15,15 +15,6 @@ const WorkerDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ScreeningResult | null>(null);
   const [reportStatus, setReportStatus] = useState<'idle' | 'generating' | 'done'>('idle');
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
-  });
-
-  const toggleTheme = () => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(nextTheme);
-    localStorage.setItem('theme', nextTheme);
-  };
 
   // New patient form state
   const [newPatient, setNewPatient] = useState({ first_name: '', last_name: '', email: '', phone: '' });
@@ -116,16 +107,16 @@ const WorkerDashboard = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-[#09090b] text-[#fafafa]' : 'bg-[#f8fafc] text-[#0f172a]'}`}>
+    <div className="min-h-screen bg-[#FAF7F2] text-[#23211E]">
       
       {/* Header */}
-      <header className={`border-b sticky top-0 z-40 transition-colors duration-300 ${theme === 'dark' ? 'bg-[#141417]/90 border-[#27272a]' : 'bg-white/90 border-slate-200'} backdrop-blur-md`}>
+      <header className="bg-white border-b border-[#EBE5DD] sticky top-0 z-40 backdrop-blur-md">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-gradient-to-br from-[#27272a] to-[#ec4899]' : 'bg-gradient-to-br from-[#0f172a] to-[#2563eb]'}`}>
+            <div className="w-9 h-9 rounded-xl bg-[#1E1E1E] flex items-center justify-center shadow-sm">
               <Eye className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-extrabold tracking-tight">Doctor & Admin Portal</h1>
+            <h1 className="text-xl font-extrabold tracking-tight text-[#23211E]">Clinical Screening Suite</h1>
           </div>
 
           <div className="flex items-center gap-3">
@@ -134,29 +125,17 @@ const WorkerDashboard = () => {
                 <button key={t} onClick={() => setTab(t)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
                     tab === t 
-                      ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md' 
-                      : theme === 'dark' ? 'bg-[#18181b] text-[#a1a1aa] hover:bg-[#27272a]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-[#C85A32] text-white shadow-sm' 
+                      : 'bg-[#F5F0E8] text-[#706B63] hover:bg-[#EBE5DD] hover:text-[#23211E]'
                   }`}>
-                  {t === 'screen' ? '🔬 Run Screening' : t === 'patients' ? '👥 My Patients' : '➕ New Patient'}
+                  {t === 'screen' ? '🔬 Run Screening' : t === 'patients' ? '👥 Patient Directory' : '➕ Register Patient'}
                 </button>
               ))}
             </div>
 
             <button
-              onClick={toggleTheme}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
-                theme === 'dark' ? 'bg-[#18181b] border-[#3f3f46] text-[#e4e4e7] hover:bg-[#27272a]' : 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-700" />}
-              <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
-            </button>
-
-            <button
               onClick={logout}
-              className={`p-2 rounded-xl border transition ${
-                theme === 'dark' ? 'bg-[#18181b] border-[#3f3f46] text-[#a1a1aa] hover:text-white' : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900'
-              }`}
+              className="p-2 rounded-xl border border-[#EBE5DD] bg-white text-[#706B63] hover:text-[#23211E] hover:bg-[#F5F0E8] transition"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />
@@ -170,72 +149,68 @@ const WorkerDashboard = () => {
         {/* === RUN SCREENING TAB === */}
         {tab === 'screen' && (
           <div className="space-y-6">
-            <div className={`p-6 rounded-2xl border shadow-sm ${theme === 'dark' ? 'bg-[#141417] border-[#27272a]' : 'bg-white border-slate-200'}`}>
-              <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2">
-                <Upload className="w-5 h-5 text-pink-500" /> New Screening
+            <div className="p-6 rounded-2xl border border-[#EBE5DD] bg-white shadow-sm">
+              <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2 text-[#23211E]">
+                <Upload className="w-5 h-5 text-[#C85A32]" /> New Retinal Screening
               </h2>
               <form onSubmit={handleUpload} className="space-y-4">
                 <div>
-                  <label className={`block text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-[#d4d4d8]' : 'text-slate-700'}`}>Select Patient</label>
+                  <label className="block text-xs font-semibold mb-1 text-[#706B63]">Select Patient Profile</label>
                   <select value={selectedPatientId} onChange={e => setSelectedPatientId(e.target.value)}
-                    className={`w-full border rounded-xl p-2.5 text-sm outline-none ${
-                      theme === 'dark' ? 'bg-[#18181b] border-[#3f3f46] text-[#fafafa]' : 'bg-white border-slate-300 text-slate-900'
-                    }`} required>
-                    <option value="">— Select a patient —</option>
+                    className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-sm outline-none focus:border-[#C85A32]" required>
+                    <option value="">— Select a patient profile —</option>
                     {patients.map(p => (
                       <option key={p.id} value={p.id}>{p.name} ({p.patient_access_id})</option>
                     ))}
                   </select>
                   {patients.length === 0 && (
-                    <p className="text-xs text-amber-500 mt-1">No patients yet. <button type="button" onClick={() => setTab('new-patient')} className="underline">Create one first →</button></p>
+                    <p className="text-xs text-amber-700 mt-1">No patient profiles registered yet. <button type="button" onClick={() => setTab('new-patient')} className="underline font-semibold">Register patient profile →</button></p>
                   )}
                 </div>
                 <div>
-                  <label className={`block text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-[#d4d4d8]' : 'text-slate-700'}`}>Retinal Fundus Image</label>
+                  <label className="block text-xs font-semibold mb-1 text-[#706B63]">Retinal Fundus Image</label>
                   <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)}
-                    className={`w-full border rounded-xl p-2 text-sm ${
-                      theme === 'dark' ? 'bg-[#18181b] border-[#3f3f46] text-[#fafafa]' : 'bg-white border-slate-300 text-slate-900'
-                    }`} required />
+                    className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2 text-sm outline-none focus:border-[#C85A32]" required />
                 </div>
                 <button type="submit" disabled={loading || !selectedPatientId}
-                  className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 disabled:opacity-40 text-white px-6 py-3 rounded-xl font-extrabold transition shadow-md">
-                  {loading ? '⏳ Running AI Inference…' : 'Run AI Screening'}
+                  className="w-full bg-[#C85A32] hover:bg-[#B34E2B] disabled:opacity-40 text-white px-6 py-3 rounded-xl font-bold transition shadow-sm">
+                  {loading ? '⏳ Analyzing Retinal Scan…' : 'Run Diagnostic AI Inference'}
                 </button>
               </form>
             </div>
 
             {result && (
-              <div className={`p-6 rounded-2xl border shadow-sm ${theme === 'dark' ? 'bg-[#141417] border-[#27272a]' : 'bg-white border-slate-200'}`}>
-                <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-emerald-500" /> Screening Result
+              <div className="p-6 rounded-2xl border border-[#EBE5DD] bg-white shadow-sm">
+                <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2 text-[#23211E]">
+                  <Eye className="w-5 h-5 text-emerald-600" /> Screening Diagnostic Summary
                 </h2>
                 <div className="grid md:grid-cols-3 gap-4 mb-4">
-                  <div className={`p-4 rounded-xl border text-center ${theme === 'dark' ? 'bg-[#18181b] border-[#27272a]' : 'bg-slate-50 border-slate-200'}`}>
-                    <p className="text-xs opacity-60 mb-1">Prediction</p>
-                    <p className={`text-2xl font-black ${result.prediction === 'DR PRESENT' ? 'text-rose-500' : 'text-emerald-500'}`}>{result.prediction}</p>
+                  <div className="p-4 rounded-xl border border-[#EBE5DD] bg-[#FAF7F2] text-center">
+                    <p className="text-xs text-[#706B63] mb-1">Diagnostic Finding</p>
+                    <p className={`text-2xl font-black ${result.prediction === 'DR PRESENT' ? 'text-rose-600' : 'text-emerald-700'}`}>{result.prediction}</p>
                   </div>
-                  <div className={`p-4 rounded-xl border text-center ${theme === 'dark' ? 'bg-[#18181b] border-[#27272a]' : 'bg-slate-50 border-slate-200'}`}>
-                    <p className="text-xs opacity-60 mb-1">Confidence</p>
-                    <p className="text-2xl font-black">{(result.confidence * 100).toFixed(1)}%</p>
+                  <div className="p-4 rounded-xl border border-[#EBE5DD] bg-[#FAF7F2] text-center">
+                    <p className="text-xs text-[#706B63] mb-1">Confidence Score</p>
+                    <p className="text-2xl font-black text-[#23211E]">{(result.confidence * 100).toFixed(1)}%</p>
                   </div>
-                  <div className={`p-4 rounded-xl border text-center ${theme === 'dark' ? 'bg-[#18181b] border-[#27272a]' : 'bg-slate-50 border-slate-200'}`}>
-                    <p className="text-xs opacity-60 mb-1">Risk Level</p>
-                    <p className="text-xl font-bold">{result.risk_level}</p>
+                  <div className="p-4 rounded-xl border border-[#EBE5DD] bg-[#FAF7F2] text-center">
+                    <p className="text-xs text-[#706B63] mb-1">Assessed Risk Level</p>
+                    <p className="text-xl font-bold text-[#23211E]">{result.risk_level}</p>
                   </div>
                 </div>
-                <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 mb-4 flex items-start gap-2 text-xs text-rose-400">
+                <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 mb-4 flex items-start gap-2 text-xs text-rose-800">
                   <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" /> {result.recommendation}
                 </div>
                 <div className="flex items-center gap-4">
                   {reportStatus !== 'done' ? (
                     <button onClick={handleGenerateAndPublish} disabled={reportStatus === 'generating'}
-                      className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md">
+                      className="flex items-center gap-2 bg-[#1E1E1E] hover:bg-[#333333] disabled:opacity-40 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm">
                       <FileText className="w-4 h-4" />
-                      {reportStatus === 'generating' ? 'Generating…' : 'Generate & Publish Report (Email Patient)'}
+                      {reportStatus === 'generating' ? 'Generating Report…' : 'Publish Report & Notify Patient'}
                     </button>
                   ) : (
-                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs">
-                      <CheckCircle className="w-5 h-5 tick-anim-box" /> Report published! Patient has been notified via email.
+                    <div className="flex items-center gap-2 text-emerald-700 font-bold text-xs">
+                      <CheckCircle className="w-5 h-5 tick-anim-box text-emerald-600" /> Report published and delivered to patient portal & email.
                     </div>
                   )}
                 </div>
@@ -246,39 +221,39 @@ const WorkerDashboard = () => {
 
         {/* === PATIENTS LIST TAB === */}
         {tab === 'patients' && (
-          <div className={`rounded-2xl border shadow-sm overflow-hidden ${theme === 'dark' ? 'bg-[#141417] border-[#27272a]' : 'bg-white border-slate-200'}`}>
-            <div className={`p-6 border-b flex justify-between items-center ${theme === 'dark' ? 'border-[#27272a]' : 'border-slate-100'}`}>
-              <h2 className="text-xl font-extrabold flex items-center gap-2"><Users className="w-5 h-5 text-pink-500" /> Registered Patients</h2>
+          <div className="rounded-2xl border border-[#EBE5DD] bg-white shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-[#EBE5DD] flex justify-between items-center">
+              <h2 className="text-xl font-extrabold flex items-center gap-2 text-[#23211E]"><Users className="w-5 h-5 text-[#C85A32]" /> Patient Directory</h2>
               <div className="flex gap-2">
-                <button onClick={handleExportCSV} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
-                  <Download className="w-4 h-4" /> Export Data (CSV)
+                <button onClick={handleExportCSV} className="flex items-center gap-2 bg-[#1E1E1E] hover:bg-[#333333] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
+                  <Download className="w-4 h-4" /> Export CSV
                 </button>
-                <button onClick={() => setTab('new-patient')} className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm">
+                <button onClick={() => setTab('new-patient')} className="flex items-center gap-2 bg-[#C85A32] hover:bg-[#B34E2B] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm">
                   <UserPlus className="w-4 h-4" /> Add Patient
                 </button>
               </div>
             </div>
-            <table className="min-w-full divide-y divide-slate-700/20">
-              <thead className={theme === 'dark' ? 'bg-[#18181b]' : 'bg-slate-50'}>
+            <table className="min-w-full divide-y divide-[#EBE5DD]">
+              <thead className="bg-[#F5F0E8]">
                 <tr>
-                  {['Patient ID', 'Name', 'Username', 'Email', 'Actions'].map(h => (
-                    <th key={h} className={`px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-[#a1a1aa]' : 'text-slate-500'}`}>{h}</th>
+                  {['Patient ID', 'Full Name', 'Username', 'Email', 'Actions'].map(h => (
+                    <th key={h} className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[#706B63]">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/20">
-                {patients.length === 0 && <tr><td colSpan={5} className="px-6 py-8 text-center opacity-50 text-sm">No patients registered yet.</td></tr>}
+              <tbody className="divide-y divide-[#EBE5DD]">
+                {patients.length === 0 && <tr><td colSpan={5} className="px-6 py-8 text-center text-[#706B63] text-sm">No registered patient records found.</td></tr>}
                 {patients.map(p => (
-                  <tr key={p.id} className={`cursor-pointer transition ${theme === 'dark' ? 'hover:bg-[#18181b]' : 'hover:bg-slate-50'}`} onClick={() => { setSelectedPatientId(String(p.id)); setTab('screen'); }}>
-                    <td className="px-6 py-4 text-sm font-mono opacity-80">{p.patient_access_id}</td>
-                    <td className="px-6 py-4 text-sm font-extrabold">{p.name}</td>
-                    <td className="px-6 py-4 text-sm opacity-80">{p.username}</td>
-                    <td className="px-6 py-4 text-sm opacity-80">{p.email || '—'}</td>
+                  <tr key={p.id} className="cursor-pointer transition hover:bg-[#FAF7F2]" onClick={() => { setSelectedPatientId(String(p.id)); setTab('screen'); }}>
+                    <td className="px-6 py-4 text-sm font-mono text-[#706B63]">{p.patient_access_id}</td>
+                    <td className="px-6 py-4 text-sm font-extrabold text-[#23211E]">{p.name}</td>
+                    <td className="px-6 py-4 text-sm text-[#706B63]">{p.username}</td>
+                    <td className="px-6 py-4 text-sm text-[#706B63]">{p.email || '—'}</td>
                     <td className="px-6 py-4 text-sm">
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDeletePatient(p.id, p.name); }}
-                        className="text-rose-400 hover:text-rose-500 p-2 rounded-lg transition"
-                        title="Delete Patient"
+                        className="text-rose-600 hover:text-rose-800 p-2 rounded-lg transition"
+                        title="Delete Patient Record"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -292,57 +267,57 @@ const WorkerDashboard = () => {
 
         {/* === NEW PATIENT TAB === */}
         {tab === 'new-patient' && (
-          <div className={`p-6 rounded-2xl border shadow-sm max-w-lg mx-auto ${theme === 'dark' ? 'bg-[#141417] border-[#27272a]' : 'bg-white border-slate-200'}`}>
-            <h2 className="text-xl font-extrabold mb-6 flex items-center gap-2"><UserPlus className="w-5 h-5 text-pink-500" /> Register New Patient</h2>
+          <div className="p-6 rounded-2xl border border-[#EBE5DD] bg-white shadow-sm max-w-lg mx-auto">
+            <h2 className="text-xl font-extrabold mb-6 flex items-center gap-2 text-[#23211E]"><UserPlus className="w-5 h-5 text-[#C85A32]" /> Register Patient Profile</h2>
 
             {createdPatient ? (
-              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-3">
-                <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto tick-anim-box" />
-                <p className="font-extrabold text-emerald-400 text-lg">Patient registered successfully!</p>
-                <div className={`text-xs space-y-1 font-mono rounded-xl p-4 text-left border ${theme === 'dark' ? 'bg-[#18181b] border-[#27272a]' : 'bg-white border-emerald-100'}`}>
-                  <p><span className="font-semibold opacity-70">Patient ID:</span> {createdPatient.patient_access_id}</p>
-                  <p><span className="font-semibold opacity-70">Username:</span> {createdPatient.username}</p>
-                  <p><span className="font-semibold opacity-70">Email sent to:</span> {createdPatient.email}</p>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center space-y-3">
+                <CheckCircle className="w-10 h-10 text-emerald-600 mx-auto tick-anim-box" />
+                <p className="font-extrabold text-emerald-800 text-lg">Patient account created successfully</p>
+                <div className="text-xs space-y-1 font-mono rounded-xl p-4 text-left border bg-white border-emerald-200 text-[#23211E]">
+                  <p><span className="font-semibold text-[#706B63]">Patient ID:</span> {createdPatient.patient_access_id}</p>
+                  <p><span className="font-semibold text-[#706B63]">Username:</span> {createdPatient.username}</p>
+                  <p><span className="font-semibold text-[#706B63]">Email:</span> {createdPatient.email}</p>
                   {createdPatient.set_password_link && (
                     <p className="pt-2 text-xs font-sans break-all">
-                      <span className="font-bold">Direct Activation Link:</span>{' '}
-                      <a href={createdPatient.set_password_link} target="_blank" rel="noreferrer" className="text-pink-500 underline">
+                      <span className="font-bold">Activation Link:</span>{' '}
+                      <a href={createdPatient.set_password_link} target="_blank" rel="noreferrer" className="text-[#C85A32] underline font-semibold">
                         {createdPatient.set_password_link}
                       </a>
                     </p>
                   )}
                 </div>
                 <button onClick={() => { setCreatedPatient(null); setTab('screen'); }}
-                  className="mt-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-2 rounded-xl text-xs font-bold shadow-md">
-                  Run Screening for this Patient
+                  className="mt-2 bg-[#C85A32] hover:bg-[#B34E2B] text-white px-6 py-2 rounded-xl text-xs font-bold shadow-sm">
+                  Initiate Retinal Screening
                 </button>
               </div>
             ) : (
               <form onSubmit={handleCreatePatient} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold mb-1 opacity-80">First Name</label>
+                    <label className="block text-xs font-semibold mb-1 text-[#706B63]">First Name</label>
                     <input value={newPatient.first_name} onChange={e => setNewPatient({ ...newPatient, first_name: e.target.value })}
-                      className={`w-full border rounded-xl p-2.5 text-xs outline-none ${theme === 'dark' ? 'bg-[#18181b] border-[#3f3f46] text-[#fafafa]' : 'bg-slate-50 border-slate-300'}`} required />
+                      className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" required />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold mb-1 opacity-80">Last Name</label>
+                    <label className="block text-xs font-semibold mb-1 text-[#706B63]">Last Name</label>
                     <input value={newPatient.last_name} onChange={e => setNewPatient({ ...newPatient, last_name: e.target.value })}
-                      className={`w-full border rounded-xl p-2.5 text-xs outline-none ${theme === 'dark' ? 'bg-[#18181b] border-[#3f3f46] text-[#fafafa]' : 'bg-slate-50 border-slate-300'}`} required />
+                      className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" required />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold mb-1 opacity-80">Email <span className="text-rose-500">*</span></label>
+                  <label className="block text-xs font-semibold mb-1 text-[#706B63]">Email Address <span className="text-rose-600">*</span></label>
                   <input type="email" value={newPatient.email} onChange={e => setNewPatient({ ...newPatient, email: e.target.value })}
-                    className={`w-full border rounded-xl p-2.5 text-xs outline-none ${theme === 'dark' ? 'bg-[#18181b] border-[#3f3f46] text-[#fafafa]' : 'bg-slate-50 border-slate-300'}`} required />
+                    className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" required />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold mb-1 opacity-80">Phone (optional)</label>
+                  <label className="block text-xs font-semibold mb-1 text-[#706B63]">Phone Number (Optional)</label>
                   <input type="tel" value={newPatient.phone} onChange={e => setNewPatient({ ...newPatient, phone: e.target.value })}
-                    className={`w-full border rounded-xl p-2.5 text-xs outline-none ${theme === 'dark' ? 'bg-[#18181b] border-[#3f3f46] text-[#fafafa]' : 'bg-slate-50 border-slate-300'}`} />
+                    className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" />
                 </div>
-                <button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl font-bold text-xs shadow-md transition">
-                  Create Patient & Send Welcome Email
+                <button type="submit" className="w-full bg-[#C85A32] hover:bg-[#B34E2B] text-white py-3 rounded-xl font-bold text-xs shadow-sm transition">
+                  Create Patient & Send Activation Email
                 </button>
               </form>
             )}

@@ -2,26 +2,17 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, CheckCircle2, Sparkles, Activity, MessageSquare, Sun, Moon } from 'lucide-react';
+import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, CheckCircle2, Sparkles, Activity, MessageSquare } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
   const [mode, setMode] = useState<'doctor' | 'patient'>('doctor');
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
-  });
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-
-  const toggleTheme = () => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(nextTheme);
-    localStorage.setItem('theme', nextTheme);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,10 +47,10 @@ const Login = () => {
   };
 
   return (
-    <div className={`dribbble-theme-container ${theme === 'dark' ? 'dark-theme' : ''}`}>
+    <div className="cream-theme-container">
       
-      {/* Elegant Header */}
-      <header className="dribbble-navbar">
+      {/* Header */}
+      <header className="cream-navbar">
         <div className="nav-brand">
           <div className="nav-logo-box">
             <Eye className="w-5 h-5 text-white" />
@@ -68,34 +59,14 @@ const Login = () => {
         </div>
 
         <div className="nav-right-actions">
-          {/* Light / Dark Mode Switcher */}
-          <button
-            type="button"
-            className="theme-toggle-btn"
-            onClick={toggleTheme}
-            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-          >
-            {theme === 'light' ? (
-              <>
-                <Moon className="w-4 h-4 text-slate-700" />
-                <span>Dark Mode</span>
-              </>
-            ) : (
-              <>
-                <Sun className="w-4 h-4 text-amber-400" />
-                <span>Light Mode</span>
-              </>
-            )}
-          </button>
-
           <span className="system-status-badge">
-            <span className="status-dot"></span> System Active v2.0
+            <span className="status-dot"></span> Clinical Portal Active
           </span>
         </div>
       </header>
 
-      {/* Main Content Area (Shifted Upwards & Elevated) */}
-      <main className="dribbble-hero-section">
+      {/* Main Content Area */}
+      <main className="cream-hero-section">
         
         {/* LEFT COLUMN: Content & Form */}
         <div className="hero-left-column">
@@ -119,76 +90,76 @@ const Login = () => {
             </button>
           </div>
 
-          {/* Dynamic Main Heading */}
+          {/* Dynamic Main Heading (Natural Professional Text) */}
           <div className="hero-heading-container" key={mode}>
             {mode === 'doctor' ? (
-              <h1 className="dribbble-hero-title">
-                Empowering clinicians with <span>AI Retinal Intelligence</span>
+              <h1 className="cream-hero-title">
+                Diabetic Retinopathy <span>Screening System</span>
               </h1>
             ) : (
-              <h1 className="dribbble-hero-title">
-                Access your reports & <span>AI Health Assistant</span>
+              <h1 className="cream-hero-title">
+                Patient Eye Health <span>Portal & Records</span>
               </h1>
             )}
             <p className="hero-subtext">
               {mode === 'doctor' 
-                ? 'Deep learning diagnostic suite for Diabetic Retinopathy grading, instant Grad-CAM heatmap generation, and automated patient notifications.'
-                : 'Review your retinal scan diagnostic reports, download official clinical PDFs, and ask questions to your 24/7 AI Health Assistant.'}
+                ? 'Upload retinal fundus images, review diagnostic heatmap overlays, and publish official clinical reports for your patients.'
+                : 'Sign in to view your screening results, download PDF diagnostic reports, and ask questions about your eye test.'}
             </p>
           </div>
 
-          {/* Feature Checklist */}
+          {/* Feature Checklist (Human Language) */}
           <div className="hero-feature-checklist" key={`list-${mode}`}>
             {mode === 'doctor' ? (
               <>
                 <div className="feature-check-item">
-                  <div className="check-icon-box pink">
+                  <div className="check-icon-box warm">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <span>Instant Diabetic Retinopathy classification & lesion detection</span>
+                  <span>Retinal image analysis & severity grading</span>
                 </div>
                 <div className="feature-check-item">
-                  <div className="check-icon-box pink">
+                  <div className="check-icon-box warm">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <span>Explainable Grad-CAM heatmaps for high-risk verification</span>
+                  <span>Visual Grad-CAM heatmap overlays for doctor review</span>
                 </div>
                 <div className="feature-check-item">
-                  <div className="check-icon-box pink">
+                  <div className="check-icon-box warm">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <span>Export PDF clinical reports & Admin CSV data export</span>
+                  <span>Exportable PDF patient reports & CSV database download</span>
                 </div>
               </>
             ) : (
               <>
                 <div className="feature-check-item">
-                  <div className="check-icon-box blue">
+                  <div className="check-icon-box sage">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <span>View official diagnostic reports & retina check summaries</span>
+                  <span>View your latest eye screening status & findings</span>
                 </div>
                 <div className="feature-check-item">
-                  <div className="check-icon-box blue">
+                  <div className="check-icon-box sage">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <span>Consult 24/7 AI Medical Assistant backed by clinical RAG</span>
+                  <span>Download official PDF diagnostic reports anytime</span>
                 </div>
                 <div className="feature-check-item">
-                  <div className="check-icon-box blue">
+                  <div className="check-icon-box sage">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <span>Secure account access via SMTP email notification link</span>
+                  <span>Ask questions about your screening report details</span>
                 </div>
               </>
             )}
           </div>
 
           {/* Inline Integrated Login Form */}
-          <div className="dribbble-form-card" key={`form-${mode}`}>
+          <div className="cream-form-card" key={`form-${mode}`}>
             {error && <div className="error-banner-box">{error}</div>}
 
-            <form onSubmit={handleSubmit} className="dribbble-login-form">
+            <form onSubmit={handleSubmit} className="cream-login-form">
               <div className="form-row-group">
                 <div className="form-field">
                   <label>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</label>
@@ -222,18 +193,18 @@ const Login = () => {
               </div>
 
               <div className="form-action-row">
-                <button type="submit" className="dribbble-submit-btn" disabled={loading}>
+                <button type="submit" className="cream-submit-btn" disabled={loading}>
                   <Sparkles className="w-4 h-4" />
-                  {loading ? 'Authenticating...' : `Sign In to ${mode === 'doctor' ? 'Doctor Portal' : 'Patient Portal'}`}
+                  {loading ? 'Signing in...' : `Sign In to ${mode === 'doctor' ? 'Doctor Portal' : 'Patient Portal'}`}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </form>
 
-            <div className="dribbble-hint">
+            <div className="cream-hint">
               {mode === 'doctor'
-                ? '🔒 Admin credentials (`medvision.admin`) grant full system access & CSV data export.'
-                : '🔑 Patients sign in with credentials received via official email link.'}
+                ? '🔒 Admin credentials (`medvision.admin`) provide complete system access & CSV data export.'
+                : '🔑 Patients sign in using credentials sent to their email.'}
             </div>
           </div>
 
@@ -247,18 +218,18 @@ const Login = () => {
             <div className="image-wrapper" key={`img-${mode}`}>
               <img
                 src={mode === 'doctor' ? '/assets/doctor_portal_hero.jpg' : '/assets/patient_portal_hero.jpg'}
-                alt={mode === 'doctor' ? 'Doctor Clinical AI Interface' : 'Patient Diagnostic Portal Interface'}
+                alt={mode === 'doctor' ? 'Doctor Workspace' : 'Patient Portal'}
                 className="portal-showcase-img"
               />
 
               {/* Floating Overlay Badge */}
               <div className="floating-portal-badge">
                 <div className="badge-icon-wrap">
-                  {mode === 'doctor' ? <Activity className="w-4 h-4 text-pink-500" /> : <MessageSquare className="w-4 h-4 text-emerald-500" />}
+                  {mode === 'doctor' ? <Activity className="w-4 h-4 text-[#C85A32]" /> : <MessageSquare className="w-4 h-4 text-[#2E7D32]" />}
                 </div>
                 <div className="badge-content-text">
-                  <span className="badge-title">{mode === 'doctor' ? 'Clinical AI Workspace' : 'Patient Portal App'}</span>
-                  <span className="badge-subtitle">{mode === 'doctor' ? 'Grad-CAM DR Diagnostics' : 'RAG Health Chatbot'}</span>
+                  <span className="badge-title">{mode === 'doctor' ? 'Clinical Workspace' : 'Patient Portal App'}</span>
+                  <span className="badge-subtitle">{mode === 'doctor' ? 'Grad-CAM DR Heatmaps' : 'Health Assistant'}</span>
                 </div>
               </div>
             </div>
@@ -273,6 +244,7 @@ const Login = () => {
 };
 
 export default Login;
+
 
 
 
