@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Activity, ShieldCheck, UserCheck } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
@@ -38,90 +39,85 @@ const Login = () => {
     }
   };
 
-  // Generate 260 grid spans to cover the full viewport edge-to-edge
-  const gridSpans = Array.from({ length: 260 });
-
   return (
-    <div className="auth-wrapper">
-      <section className="auth-section">
-        {gridSpans.map((_, i) => (
-          <span key={i}></span>
-        ))}
+    <div className="formal-auth-wrapper">
+      {/* Subtle ambient light orbs (no childish grid boxes) */}
+      <div className="ambient-glow-1"></div>
+      <div className="ambient-glow-2"></div>
+      <div className="bg-grid-overlay"></div>
 
-        <div className="auth-card">
-          <div className="content">
-
-            {/* Clean Brand Header */}
-            <div className="brand-header">
-              <div className="eye-scanner-icon">
-                <div className="iris-pulse"></div>
-                <div className="scanner-beam"></div>
-              </div>
-              <h2 className="brand-title">MEDVISION AI</h2>
-              <p className="subtitle">Screen. Explain. Share. Understand.</p>
-            </div>
-
-            {/* Smooth Sliding Role Switcher */}
-            <div className="role-toggle-container">
-              <div className={`role-toggle-pill ${mode === 'patient' ? 'patient' : ''}`}></div>
-              <button
-                type="button"
-                className={`role-btn ${mode === 'doctor' ? 'active' : ''}`}
-                onClick={() => { setMode('doctor'); setError(''); }}
-              >
-                🩺 Doctor / Admin
-              </button>
-              <button
-                type="button"
-                className={`role-btn ${mode === 'patient' ? 'active' : ''}`}
-                onClick={() => { setMode('patient'); setError(''); }}
-              >
-                👤 Patient
-              </button>
-            </div>
-
-            {error && <div className="error-banner">{error}</div>}
-
-            {/* Form Container with Keyed Smooth Switch Animation */}
-            <div className="form-container" key={mode}>
-              <form onSubmit={handleSubmit}>
-                <div className="inputBox">
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                    placeholder=" "
-                  />
-                  <i>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</i>
-                </div>
-
-                <div className="inputBox">
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    placeholder=" "
-                  />
-                  <i>Password</i>
-                </div>
-
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? 'Authenticating…' : `Login as ${mode === 'doctor' ? 'Doctor / Admin' : 'Patient'}`}
-                </button>
-              </form>
-
-              <p className="hint-text">
-                {mode === 'doctor'
-                  ? '🔒 Admin credentials allow system-wide access and CSV data exports.'
-                  : '🔑 Use the username & password set via your email activation link.'}
-              </p>
-            </div>
-
+      <div className="formal-card">
+        {/* Header Logo */}
+        <div className="card-header">
+          <div className="logo-badge-icon">
+            <Activity className="w-6 h-6 text-sky-400" />
           </div>
+          <h1 className="brand-name">
+            MEDVISION <span className="ai-accent">AI</span>
+          </h1>
+          <p className="platform-tagline">Diabetic Retinopathy Screening & Diagnostic Platform</p>
         </div>
-      </section>
+
+        {/* Role Toggle Track with Smooth Glider */}
+        <div className="role-switch-track">
+          <div className={`role-switch-glider ${mode === 'patient' ? 'patient' : ''}`}></div>
+          <button
+            type="button"
+            className={`role-option-btn ${mode === 'doctor' ? 'active' : ''}`}
+            onClick={() => { setMode('doctor'); setError(''); }}
+          >
+            <ShieldCheck className="w-4 h-4" /> Doctor / Admin
+          </button>
+          <button
+            type="button"
+            className={`role-option-btn ${mode === 'patient' ? 'active' : ''}`}
+            onClick={() => { setMode('patient'); setError(''); }}
+          >
+            <UserCheck className="w-4 h-4" /> Patient
+          </button>
+        </div>
+
+        {error && <div className="error-box">{error}</div>}
+
+        {/* Animated Form Container */}
+        <div className="form-fade-wrapper" key={mode}>
+          <form onSubmit={handleSubmit} className="formal-form">
+            <div className="form-group">
+              <label>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</label>
+              <input
+                type="text"
+                className="form-input"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder={mode === 'doctor' ? 'Enter username e.g. dr.screening' : 'Enter your patient username'}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                className="form-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                required
+              />
+            </div>
+
+            <button type="submit" className="primary-btn" disabled={loading}>
+              {loading ? 'Authenticating...' : `Sign In to ${mode === 'doctor' ? 'Clinical Portal' : 'Patient Portal'}`}
+            </button>
+          </form>
+
+          <p className="hint-note">
+            {mode === 'doctor'
+              ? '🔒 Authenticated clinical portal. Admin credentials enable full system oversight & CSV exports.'
+              : '🔑 Access your screening results, PDF downloads & AI health assistant.'}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
