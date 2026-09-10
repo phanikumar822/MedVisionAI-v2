@@ -40,7 +40,7 @@ const Login = () => {
   return (
     <div className="dribbble-theme-container">
       
-      {/* Top Navbar */}
+      {/* Elegant Header */}
       <header className="dribbble-navbar">
         <div className="nav-brand">
           <div className="nav-logo-box">
@@ -49,13 +49,6 @@ const Login = () => {
           <span className="nav-brand-text">MedVision<span>AI</span></span>
         </div>
 
-        <nav className="nav-links">
-          <button type="button" className="nav-link-btn active">Explore</button>
-          <button type="button" className={`nav-link-btn ${mode === 'doctor' ? 'highlight' : ''}`} onClick={() => setMode('doctor')}>Doctor Portal</button>
-          <button type="button" className={`nav-link-btn ${mode === 'patient' ? 'highlight' : ''}`} onClick={() => setMode('patient')}>Patient Portal</button>
-          <button type="button" className="nav-link-btn">Clinical Suite</button>
-        </nav>
-
         <div className="nav-right-actions">
           <span className="system-status-badge">
             <span className="status-dot"></span> System Active v2.0
@@ -63,14 +56,7 @@ const Login = () => {
         </div>
       </header>
 
-      {/* Top Notice Banner */}
-      <div className="dribbble-top-banner">
-        <span className="banner-tag">🎉 ACTIVE SUITE</span>
-        <span className="banner-text">Clinical Retinal AI Screening v2.0 with Grad-CAM Heatmaps & RAG Assistant</span>
-        <span className="banner-action">Explore Features</span>
-      </div>
-
-      {/* Main Content Area */}
+      {/* Main Content Area (Shifted Upwards & Elevated) */}
       <main className="dribbble-hero-section">
         
         {/* LEFT COLUMN: Content & Form */}
@@ -249,4 +235,5 @@ const Login = () => {
 };
 
 export default Login;
+
 
