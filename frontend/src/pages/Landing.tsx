@@ -192,7 +192,6 @@ const Landing = () => {
 
                 <div className="links">
                   <Link to="/login">Switch Full View</Link>
-                  <Link to="/login">Forgot Password</Link>
                 </div>
 
                 <div className="inputBox">

@@ -97,11 +97,11 @@
   transition: 0s !important;
 }
 
-/* Red Cross Pattern Class (formed by hovered center + adjacent arm boxes) */
+/* Full Medical Crosshair Pattern (Entire Row & Entire Column in Red Boxes) */
 .medical-grid-box.is-red-cross {
-  background: linear-gradient(135deg, #dc2626, #991b1b) !important;
-  border-color: #ef4444 !important;
-  box-shadow: 0 0 18px rgba(239, 68, 68, 0.95);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.85), rgba(153, 27, 27, 0.95)) !important;
+  border-color: rgba(248, 113, 113, 0.7) !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.7);
   transition: 0s !important;
   z-index: 10;
 }
@@ -109,16 +109,17 @@
 .medical-grid-box.is-red-cross::before {
   opacity: 1 !important;
   color: #ffffff !important;
-  text-shadow: 0 0 8px #ffffff, 0 0 12px #ef4444;
-  transform: scale(1.35);
+  text-shadow: 0 0 6px #ffffff, 0 0 10px #ef4444;
+  transform: scale(1.15);
   transition: 0s !important;
 }
 
-/* Center box extra glow */
+/* Center box extra glow at intersection */
 .medical-grid-box.is-red-center {
   background: radial-gradient(circle, #f87171 0%, #dc2626 100%) !important;
   box-shadow: 0 0 25px rgba(239, 68, 68, 1), inset 0 0 12px #ffffff !important;
   border-color: #ffffff !important;
+  z-index: 15;
 }
 
 /* Split Grid Layout inside Section (Hero Text + Signin Card) */
@@ -244,7 +245,7 @@
   background: #1a2346;
   border: 2px solid transparent;
   outline: none;
-  padding: 20px 15px 8px;
+  padding: 22px 15px 6px;
   border-radius: 12px;
   color: #fff;
   font-weight: 500;
@@ -267,14 +268,15 @@
   color: #7a8ab8;
   transition: 0.3s;
   pointer-events: none;
-  font-size: 0.95em;
+  font-size: 0.9em;
 }
 
 .medical-signin-card .inputBox input:focus ~ i,
-.medical-signin-card .inputBox input:valid ~ i {
-  top: 12px;
+.medical-signin-card .inputBox input:valid ~ i,
+.medical-signin-card .inputBox input:not(:placeholder-shown) ~ i {
+  top: 10px;
   transform: translateY(0);
-  font-size: 0.75em;
+  font-size: 0.72em;
   color: #2dd4bf;
   font-weight: 600;
 }
