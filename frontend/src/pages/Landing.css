@@ -1,0 +1,376 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Main Container */
+.medical-landing-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #0a0e27;
+  color: #f8fafc;
+  overflow-x: hidden;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Interactive Hero Section */
+.medical-auth-section {
+  position: relative;
+  width: 100%;
+  min-height: 88vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 40px 20px;
+}
+
+/* Animated linear gradient sweep underneath - Teal & Emerald replacing Blue */
+.medical-auth-section::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(#0a0e27, #0f766e, #0d9488, #047857, #0a0e27);
+  animation: animateMedical 7s linear infinite;
+  opacity: 0.85;
+}
+
+@keyframes animateMedical {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Dynamic Grid Container */
+.medical-grid-container {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  gap: 2px;
+  overflow: hidden;
+  z-index: 1;
+  padding: 2px;
+}
+
+/* Individual Grid Box (span) */
+.medical-grid-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f1535;
+  z-index: 2;
+  transition: background 1.2s ease, border-color 1.2s ease, box-shadow 1.2s ease;
+  user-select: none;
+  border: 1px solid rgba(15, 118, 110, 0.08);
+  cursor: pointer;
+}
+
+/* Medical '+' symbol inside each box */
+.medical-grid-box::before {
+  content: '+';
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 900;
+  font-size: 16px;
+  color: #ef4444;
+  opacity: 0;
+  transition: opacity 1s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+/* Hover effect on single cell */
+.medical-grid-box:hover {
+  background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+  border-color: #f87171 !important;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.9);
+  transition: 0s !important;
+  z-index: 10;
+}
+
+.medical-grid-box:hover::before {
+  opacity: 1 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 8px #ffffff, 0 0 12px #ef4444;
+  transform: scale(1.3);
+  transition: 0s !important;
+}
+
+/* Red Cross Pattern Class (formed by hovered center + adjacent arm boxes) */
+.medical-grid-box.is-red-cross {
+  background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.95);
+  transition: 0s !important;
+  z-index: 10;
+}
+
+.medical-grid-box.is-red-cross::before {
+  opacity: 1 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 8px #ffffff, 0 0 12px #ef4444;
+  transform: scale(1.35);
+  transition: 0s !important;
+}
+
+/* Center box extra glow */
+.medical-grid-box.is-red-center {
+  background: radial-gradient(circle, #f87171 0%, #dc2626 100%) !important;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 1), inset 0 0 12px #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+/* Split Grid Layout inside Section (Hero Text + Signin Card) */
+.medical-hero-layout {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 20px;
+}
+
+@media (min-width: 1024px) {
+  .medical-hero-layout {
+    grid-template-columns: 1fr 440px;
+  }
+}
+
+/* Hero Left Text Box */
+.medical-hero-info {
+  text-align: left;
+}
+
+.medical-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: rgba(15, 118, 110, 0.25);
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  color: #2dd4bf;
+  font-size: 0.8rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  margin-bottom: 20px;
+}
+
+.medical-hero-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .medical-hero-title {
+    font-size: 3.1rem;
+  }
+}
+
+.medical-hero-title span {
+  background: linear-gradient(135deg, #2dd4bf, #0f766e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.medical-hero-subtext {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-bottom: 28px;
+}
+
+/* Signin Card (from auth-page design) */
+.medical-signin-card {
+  position: relative;
+  width: 100%;
+  background: rgba(15, 21, 53, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 100;
+  padding: 35px 32px;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7),
+              0 0 40px rgba(15, 118, 110, 0.25);
+  border: 1px solid rgba(15, 118, 110, 0.35);
+}
+
+.medical-signin-card .content {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.medical-signin-card .content h2 {
+  font-size: 1.75em;
+  background: linear-gradient(135deg, #2dd4bf, #0f766e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.medical-signin-card .content .form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.medical-signin-card .inputBox {
+  position: relative;
+  width: 100%;
+}
+
+.medical-signin-card .inputBox input {
+  position: relative;
+  width: 100%;
+  background: #1a2346;
+  border: 2px solid transparent;
+  outline: none;
+  padding: 20px 15px 8px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.95em;
+  transition: 0.3s;
+}
+
+.medical-signin-card .inputBox input:focus {
+  border: 2px solid #0f766e;
+  background: #0f172a;
+  box-shadow: 0 0 12px rgba(15, 118, 110, 0.4);
+}
+
+.medical-signin-card .inputBox i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-style: normal;
+  color: #7a8ab8;
+  transition: 0.3s;
+  pointer-events: none;
+  font-size: 0.95em;
+}
+
+.medical-signin-card .inputBox input:focus ~ i,
+.medical-signin-card .inputBox input:valid ~ i {
+  top: 12px;
+  transform: translateY(0);
+  font-size: 0.75em;
+  color: #2dd4bf;
+  font-weight: 600;
+}
+
+.medical-signin-card .links {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: -5px;
+}
+
+.medical-signin-card .links a {
+  color: #8fa4d4;
+  text-decoration: none;
+  font-size: 0.85em;
+  transition: 0.3s;
+}
+
+.medical-signin-card .links a:hover {
+  color: #2dd4bf;
+}
+
+.medical-signin-card .links a:nth-child(2) {
+  color: #2dd4bf;
+  font-weight: 600;
+}
+
+.medical-signin-card .links a:nth-child(2):hover {
+  color: #14b8a6;
+}
+
+.medical-signin-card input[type="submit"],
+.medical-signin-card .submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #0f766e, #0d9488);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95em;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: none;
+  border-radius: 12px;
+  margin-top: 5px;
+  text-transform: uppercase;
+  transition: 0.3s;
+  box-shadow: 0 10px 25px rgba(15, 118, 110, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.medical-signin-card input[type="submit"]:hover,
+.medical-signin-card .submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(15, 118, 110, 0.6);
+  background: linear-gradient(135deg, #0d9488, #14b8a6);
+}
+
+.medical-signin-card input[type="submit"]:active,
+.medical-signin-card .submit-btn:active {
+  transform: translateY(0);
+  opacity: 0.9;
+}
+
+/* Doctor / Patient Mode Switcher */
+.signin-mode-toggle {
+  display: flex;
+  background: #0f172a;
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  margin-bottom: 8px;
+}
+
+.signin-mode-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.signin-mode-btn.active {
+  background: #0f766e;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.5);
+}
