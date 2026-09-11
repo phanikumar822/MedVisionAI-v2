@@ -31,7 +31,7 @@ const Landing = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-12 gap-12 items-center">
+      <section className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
         
         {/* Left Column: Messaging */}
         <div className="lg:col-span-6 space-y-6 text-left">
@@ -48,73 +48,85 @@ const Landing = () => {
             Upload retinal fundus scans, review diagnostic Grad-CAM heatmaps, and issue official clinical screening reports for patients in a secure, role-based workspace.
           </p>
 
-          <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <Link to="/login" className="bg-[#0F766E] hover:bg-[#0D9488] text-white px-6 py-3 rounded-md text-xs font-semibold transition shadow-sm text-center">
+          <div className="pt-1 flex flex-col sm:flex-row gap-3">
+            <Link to="/login" className="bg-[#0F766E] hover:bg-[#0D9488] text-white px-6 py-3 rounded-lg text-xs font-semibold transition shadow-xs text-center">
               Launch Clinical Portal
             </Link>
-            <a href="#clinical-workspace" className="bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8F9FA] px-6 py-3 rounded-md text-xs font-semibold transition text-center">
+            <a href="#clinical-workspace" className="bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8F9FA] px-6 py-3 rounded-lg text-xs font-semibold transition text-center">
               Capabilities Overview
             </a>
           </div>
 
-          <div className="pt-4 flex items-center gap-6 text-xs text-[#64748B] border-t border-[#E2E8F0]">
-            <div><span className="font-bold text-[#0F172A]">Grad-CAM</span> Heatmap Verification</div>
-            <div><span className="font-bold text-[#0F172A]">Grok AI</span> Clinical Context</div>
-            <div><span className="font-bold text-[#0F172A]">PDF / XLSX</span> Exports</div>
+          <div className="pt-4 flex items-center gap-3 sm:gap-5 text-xs text-[#64748B] border-t border-[#E2E8F0]">
+            <div><span className="font-semibold text-[#0F172A]">Grad-CAM</span> Heatmap Verification</div>
+            <span className="text-[#CBD5E1]">•</span>
+            <div><span className="font-semibold text-[#0F172A]">Grok AI</span> Clinical Context</div>
+            <span className="text-[#CBD5E1]">•</span>
+            <div><span className="font-semibold text-[#0F172A]">PDF / XLSX</span> Exports</div>
           </div>
         </div>
 
-        {/* Right Column: Real Software UI Preview Mockup */}
+        {/* Right Column: Real Software UI Preview */}
         <div className="lg:col-span-6">
-          <div className="bg-white border border-[#E2E8F0] rounded-lg shadow-sm overflow-hidden text-left">
-            {/* Mock Header */}
-            <div className="bg-[#F8F9FA] border-b border-[#E2E8F0] px-4 py-3 flex items-center justify-between">
+          <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl shadow-md overflow-hidden text-left">
+            {/* PACS Dark Header Toolbar */}
+            <div className="bg-[#1E293B] border-b border-[#334155] px-4 py-2.5 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span>
                 <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
                 <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
-                <span className="text-xs font-mono text-[#64748B] ml-2">Screening ID: MV-0F1B84F1</span>
+                <span className="text-[11px] font-mono text-[#94A3B8] ml-2">SCREENING ID: MV-93320C4B</span>
               </div>
-              <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
+              <span className="px-2.5 py-0.5 rounded text-[11px] font-extrabold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
                 NO DR DETECTED
               </span>
             </div>
 
-            {/* Mock Workspace Content */}
-            <div className="p-5 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1 text-center">
-                  <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider">Original Fundus</span>
-                  <div className="aspect-square bg-slate-950 rounded-md overflow-hidden flex items-center justify-center border border-[#E2E8F0]">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-amber-700 via-orange-600 to-amber-500 opacity-90 border border-amber-300 flex items-center justify-center">
-                      <div className="w-4 h-4 rounded-full bg-amber-200 blur-xs"></div>
+            {/* Medical Imaging Viewer Content */}
+            <div className="p-4 space-y-4 bg-[#090D16]">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5 text-center">
+                  <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider block">Original Fundus</span>
+                  <div className="aspect-square bg-black rounded-lg overflow-hidden border border-[#1E293B] shadow-inner relative">
+                    <img 
+                      src="/assets/hero_fundus.png" 
+                      alt="Original Retinal Scan" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-1.5 left-1.5 bg-black/70 text-[9px] text-[#CBD5E1] px-1.5 py-0.5 rounded font-mono">
+                      FUNDUS_SCAN.PNG
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-1 text-center">
-                  <span className="text-[11px] font-semibold text-[#0F766E] uppercase tracking-wider">Grad-CAM Heatmap</span>
-                  <div className="aspect-square bg-slate-950 rounded-md overflow-hidden flex items-center justify-center border border-[#0F766E]/30 relative">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-700 via-emerald-600 to-amber-500 opacity-90 border border-emerald-300 flex items-center justify-center">
-                      <div className="w-6 h-6 rounded-full bg-red-500 opacity-60 blur-xs"></div>
+                <div className="space-y-1.5 text-center">
+                  <span className="text-[10px] font-bold text-[#2DD4BF] uppercase tracking-wider block">AI Attention (Grad-CAM)</span>
+                  <div className="aspect-square bg-black rounded-lg overflow-hidden border border-[#0F766E]/50 shadow-inner relative">
+                    <img 
+                      src="/assets/hero_heatmap.jpg" 
+                      alt="Grad-CAM Attention Heatmap" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-1.5 left-1.5 bg-black/70 text-[9px] text-[#2DD4BF] px-1.5 py-0.5 rounded font-mono">
+                      GRADCAM_OVERLAY
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Metrics Row */}
-              <div className="grid grid-cols-3 gap-2 bg-[#F8F9FA] p-3 rounded-md border border-[#E2E8F0] text-center text-xs">
+              {/* Metrics Summary Strip */}
+              <div className="grid grid-cols-3 gap-2 bg-[#1E293B]/70 p-3 rounded-lg border border-[#334155] text-center text-xs">
                 <div>
-                  <div className="text-[11px] text-[#64748B]">Confidence</div>
-                  <div className="font-bold text-[#0F172A]">94.2%</div>
+                  <div className="text-[10px] uppercase font-semibold text-[#94A3B8]">Confidence</div>
+                  <div className="font-extrabold text-white text-sm">99.2%</div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-[#64748B]">Risk Level</div>
-                  <div className="font-bold text-[#059669]">LOW</div>
+                  <div className="text-[10px] uppercase font-semibold text-[#94A3B8]">Risk Level</div>
+                  <div className="font-extrabold text-[#34D399] text-sm">LOW</div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-[#64748B]">DR Probability</div>
-                  <div className="font-bold text-[#0F172A]">5.8%</div>
+                  <div className="text-[10px] uppercase font-semibold text-[#94A3B8]">DR Probability</div>
+                  <div className="font-extrabold text-white text-sm">0.8%</div>
                 </div>
               </div>
             </div>
