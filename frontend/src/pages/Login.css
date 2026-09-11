@@ -508,6 +508,141 @@
   }
 }
 
+/* === DARK MODE OVERRIDES === */
+html.dark .cream-theme-container {
+  background: #0D0F12;
+  color: #F3F4F6;
+}
+
+html.dark .cream-navbar {
+  background: #16191E;
+  border-bottom-color: #262B34;
+}
+
+html.dark .nav-brand-text {
+  color: #F3F4F6;
+}
+
+html.dark .system-status-badge {
+  background: #122818;
+  border-color: #1C4D25;
+  color: #4ADE80;
+}
+
+html.dark .status-dot {
+  background: #4ADE80;
+}
+
+html.dark .portal-pill-toggle {
+  background: #16191E;
+  border-color: #262B34;
+}
+
+html.dark .pill-glider {
+  background: #262B34;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .pill-tab {
+  color: #9CA3AF;
+}
+
+html.dark .pill-tab.active {
+  color: #F3F4F6;
+}
+
+html.dark .cream-hero-title {
+  color: #F3F4F6;
+}
+
+html.dark .hero-subtext {
+  color: #9CA3AF;
+}
+
+html.dark .feature-check-item {
+  color: #E5E7EB;
+}
+
+html.dark .check-icon-box.warm {
+  background: #2A1B16;
+  color: #E06D44;
+}
+
+html.dark .check-icon-box.sage {
+  background: #122818;
+  color: #4ADE80;
+}
+
+html.dark .cream-form-card {
+  background: #16191E;
+  border-color: #262B34;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .form-field label {
+  color: #D1D5DB;
+}
+
+html.dark .field-icon {
+  color: #6B7280;
+}
+
+html.dark .field-input {
+  background: #0D0F12;
+  border-color: #262B34;
+  color: #F3F4F6;
+}
+
+html.dark .field-input:focus {
+  background: #16191E;
+  border-color: #C85A32;
+  box-shadow: 0 0 0 3px rgba(200, 90, 50, 0.15);
+}
+
+html.dark .cream-submit-btn {
+  background: #C85A32;
+  box-shadow: 0 4px 12px rgba(200, 90, 50, 0.25);
+}
+
+html.dark .cream-submit-btn:hover {
+  background: #D96B43;
+  box-shadow: 0 6px 18px rgba(200, 90, 50, 0.35);
+}
+
+html.dark .cream-hint {
+  color: #9CA3AF;
+}
+
+html.dark .hero-image-frame-card {
+  background: #16191E;
+  border-color: #262B34;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .floating-portal-badge {
+  background: rgba(22, 25, 30, 0.92);
+  border-color: #262B34;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .badge-icon-wrap {
+  background: #0D0F12;
+}
+
+html.dark .badge-title {
+  color: #F3F4F6;
+}
+
+html.dark .badge-subtitle {
+  color: #9CA3AF;
+}
+
+html.dark .error-banner-box {
+  background: #2A1616;
+  border-color: #7F1D1D;
+  color: #F87171;
+}
+
 
 
 

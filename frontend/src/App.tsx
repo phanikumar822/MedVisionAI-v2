@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 import Landing from './pages/Landing';
 import Login from './pages/Login';
@@ -15,11 +16,11 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] text-[#23211E] flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 rounded-2xl bg-[#1E1E1E] flex items-center justify-center shadow-md animate-pulse">
+      <div className="min-h-screen bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-[#1E1E1E] dark:bg-[#C85A32] flex items-center justify-center shadow-md animate-pulse">
           <span className="text-white text-xl font-bold">MV</span>
         </div>
-        <p className="text-xs font-semibold text-[#706B63] tracking-wide uppercase">Securing Session & Validating Credentials…</p>
+        <p className="text-xs font-semibold text-[#6E6A63] dark:text-[#9CA3AF] tracking-wide uppercase">Securing Session & Validating Credentials…</p>
       </div>
     );
   }
@@ -45,11 +46,14 @@ const AppRoutes = () => {
 const App = () => {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 };
 
 export default App;
+
