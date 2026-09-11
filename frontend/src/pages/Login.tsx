@@ -164,8 +164,40 @@ const Login = () => {
             )}
           </div>
 
-          {/* Inline Integrated Login Form */}
+          {/* Inline Integrated Login Form Card */}
           <div className="cream-form-card" key={`form-${mode}`}>
+            
+            {/* Quick Autofill Buttons for Testing */}
+            <div className="mb-4 pb-3 border-b border-[#E6E1D7] dark:border-[#262B34] flex flex-wrap items-center gap-2">
+              <span className="text-[11px] font-bold text-[#706B63] dark:text-[#9CA3AF] uppercase tracking-wider">Quick Demo Autofill:</span>
+              {mode === 'doctor' ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => { setUsername('dr.screening'); setPassword('D0ct0r@Scan#2026'); setError(''); }}
+                    className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F8F6F0] dark:bg-[#0D0F12] border border-[#E6E1D7] dark:border-[#262B34] text-[#C85A32] dark:text-[#E06D44] hover:bg-[#F0EDE6] dark:hover:bg-[#1A1F26] transition flex items-center gap-1 cursor-pointer"
+                  >
+                    🩺 Doctor Demo
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setUsername('medvision.admin'); setPassword('Adm!nV1s10n#2026'); setError(''); }}
+                    className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F8F6F0] dark:bg-[#0D0F12] border border-[#E6E1D7] dark:border-[#262B34] text-[#2E7D32] dark:text-[#4ADE80] hover:bg-[#F0EDE6] dark:hover:bg-[#1A1F26] transition flex items-center gap-1 cursor-pointer"
+                  >
+                    👑 Admin Demo
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => { setUsername('P2026001'); setPassword('PatientPass123!'); setError(''); }}
+                  className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F8F6F0] dark:bg-[#0D0F12] border border-[#E6E1D7] dark:border-[#262B34] text-[#C85A32] dark:text-[#E06D44] hover:bg-[#F0EDE6] dark:hover:bg-[#1A1F26] transition flex items-center gap-1 cursor-pointer"
+                >
+                  👤 Patient Demo
+                </button>
+              )}
+            </div>
+
             {error && <div className="error-banner-box">{error}</div>}
 
             <form onSubmit={handleSubmit} className="cream-login-form">

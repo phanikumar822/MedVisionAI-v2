@@ -38,9 +38,16 @@ const WorkerDashboard = () => {
   const [reportStatus, setReportStatus] = useState<'idle' | 'generating' | 'done'>('idle');
   const [stats, setStats] = useState<Stats | null>(null);
 
-  // New patient form state
   const [newPatient, setNewPatient] = useState({ first_name: '', last_name: '', email: '', phone: '' });
   const [createdPatient, setCreatedPatient] = useState<any>(null);
+  const [patientSearch, setPatientSearch] = useState('');
+
+  const filteredPatients = patients.filter(p => 
+    p.name.toLowerCase().includes(patientSearch.toLowerCase()) ||
+    p.patient_access_id.toLowerCase().includes(patientSearch.toLowerCase()) ||
+    (p.email && p.email.toLowerCase().includes(patientSearch.toLowerCase())) ||
+    p.username.toLowerCase().includes(patientSearch.toLowerCase())
+  );
 
   useEffect(() => {
     fetchPatients();
@@ -391,17 +398,31 @@ const WorkerDashboard = () => {
         {/* === PATIENTS LIST TAB === */}
         {tab === 'patients' && (
           <div className="rounded-2xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-[#E6E1D7] dark:border-[#262B34] flex justify-between items-center">
-              <h2 className="text-xl font-extrabold flex items-center gap-2 text-[#1A1917] dark:text-[#F3F4F6]"><Users className="w-5 h-5 text-[#C85A32]" /> Patient Directory</h2>
-              <div className="flex gap-2">
-                <button onClick={handleExportExcel} className="flex items-center gap-2 bg-[#1E1E1E] dark:bg-[#20242D] hover:bg-[#333333] dark:hover:bg-[#2C323E] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
-                  <Download className="w-4 h-4 text-emerald-400" /> Export Excel (.xlsx)
+            <div className="p-6 border-b border-[#E6E1D7] dark:border-[#262B34] flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-extrabold flex items-center gap-2 text-[#1A1917] dark:text-[#F3F4F6]"><Users className="w-5 h-5 text-[#C85A32]" /> Patient Directory</h2>
+                <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF] mt-1">Manage clinical patient profiles & export records to Excel (.xlsx)</p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <input
+                  type="text"
+                  placeholder="Search by name, ID, or email..."
+                  value={patientSearch}
+                  onChange={(e) => setPatientSearch(e.target.value)}
+                  className="px-3.5 py-2 rounded-xl text-xs border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] outline-none focus:border-[#C85A32] w-60"
+                />
+
+                <button onClick={handleExportExcel} className="flex items-center gap-2 bg-[#2E7D32] hover:bg-[#256628] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition cursor-pointer">
+                  <Download className="w-4 h-4 text-white" /> Export Excel (.xlsx)
                 </button>
-                <button onClick={() => setTab('new-patient')} className="flex items-center gap-2 bg-[#C85A32] hover:bg-[#B34E2B] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm">
+
+                <button onClick={() => setTab('new-patient')} className="flex items-center gap-2 bg-[#C85A32] hover:bg-[#B34E2B] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm cursor-pointer">
                   <UserPlus className="w-4 h-4" /> Add Patient
                 </button>
               </div>
             </div>
+
             <table className="min-w-full divide-y divide-[#E6E1D7] dark:divide-[#262B34]">
               <thead className="bg-[#F0ECDF] dark:bg-[#20242D]">
                 <tr>
@@ -411,8 +432,10 @@ const WorkerDashboard = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E6E1D7] dark:divide-[#262B34]">
-                {patients.length === 0 && <tr><td colSpan={5} className="px-6 py-8 text-center text-[#6E6A63] dark:text-[#9CA3AF] text-sm">No registered patient records found.</td></tr>}
-                {patients.map(p => (
+                {filteredPatients.length === 0 && (
+                  <tr><td colSpan={5} className="px-6 py-8 text-center text-[#6E6A63] dark:text-[#9CA3AF] text-sm">No matching patient records found.</td></tr>
+                )}
+                {filteredPatients.map(p => (
                   <tr key={p.id} className="cursor-pointer transition hover:bg-[#F8F6F0] dark:hover:bg-[#20242D]" onClick={() => { setSelectedPatientId(String(p.id)); setTab('screen'); }}>
                     <td className="px-6 py-4 text-sm font-mono text-[#6E6A63] dark:text-[#9CA3AF]">{p.patient_access_id}</td>
                     <td className="px-6 py-4 text-sm font-extrabold text-[#1A1917] dark:text-[#F3F4F6]">{p.name}</td>

@@ -256,6 +256,20 @@ const PatientDashboard = () => {
             <div ref={chatEndRef} />
           </div>
 
+          {/* Quick Prompt Suggestions */}
+          <div className="px-3 py-2 bg-white dark:bg-[#16191E] border-t border-[#E6E1D7] dark:border-[#262B34] flex gap-1.5 overflow-x-auto">
+            {["What is Diabetic Retinopathy?", "What are my recommended next steps?", "How to read confidence?"].map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => setChatInput(chip)}
+                className="whitespace-nowrap text-[10px] font-semibold px-2.5 py-1 rounded-lg bg-[#F8F6F0] dark:bg-[#0D0F12] border border-[#E6E1D7] dark:border-[#262B34] text-[#C85A32] dark:text-[#E06D44] hover:bg-[#E6E1D7] dark:hover:bg-[#20242D] transition cursor-pointer"
+              >
+                💡 {chip}
+              </button>
+            ))}
+          </div>
+
           {/* Chat Input */}
           <form onSubmit={handleSendMessage} className="p-3 border-t border-[#E6E1D7] dark:border-[#262B34] flex gap-2 rounded-b-2xl bg-white dark:bg-[#16191E]">
             <input
@@ -267,7 +281,7 @@ const PatientDashboard = () => {
               disabled={chatLoading}
             />
             <button type="submit" disabled={chatLoading || !chatInput.trim()}
-              className="bg-[#1A1917] dark:bg-[#C85A32] hover:bg-[#3D3A36] dark:hover:bg-[#D96B43] disabled:opacity-40 text-white px-4 py-2 rounded-xl text-xs font-bold transition">
+              className="bg-[#1A1917] dark:bg-[#C85A32] hover:bg-[#3D3A36] dark:hover:bg-[#D96B43] disabled:opacity-40 text-white px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer">
               Send
             </button>
           </form>
