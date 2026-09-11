@@ -219,7 +219,7 @@ const Login = () => {
               {/* Floating Overlay Badge */}
               <div className="floating-portal-badge">
                 <div className="badge-icon-wrap">
-                  {mode === 'doctor' ? <Activity className="w-4 h-4 text-[#C85A32]" /> : <MessageSquare className="w-4 h-4 text-[#2E7D32]" />}
+                  {mode === 'doctor' ? <Activity className="w-4 h-4 text-[#0F766E]" /> : <MessageSquare className="w-4 h-4 text-[#047857]" />}
                 </div>
                 <div className="badge-content-text">
                   <span className="badge-title">{mode === 'doctor' ? 'Clinical Workspace' : 'Patient Portal App'}</span>
