@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -17,7 +17,11 @@ class SetPasswordRequest(BaseModel):
     new_password: str
 
 @router.post("/login", response_model=Token)
-def login_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
+def login_access_token(
+    response: Response,
+    db: Session = Depends(get_db), 
+    form_data: OAuth2PasswordRequestForm = Depends()
+):
     user = db.query(User).filter(User.username == form_data.username).first()
     if not user or not user.hashed_password:
         # Account exists but password not yet set
@@ -36,11 +40,29 @@ def login_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordR
     access_token = create_access_token(
         data={"sub": user.username, "role": user.role}, expires_delta=access_token_expires
     )
+    
+    # Set HTTP-only secure cookie for authentication
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/"
+    )
+    
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/logout")
+def logout(response: Response):
+    """Clear HTTP-only access_token authentication cookie."""
+    response.delete_cookie(key="access_token", path="/")
+    return {"message": "Logged out successfully"}
 
 @router.get("/me", response_model=UserResponse)
 def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
+
 
 @router.post("/set-password")
 def set_password(data: SetPasswordRequest, db: Session = Depends(get_db)):

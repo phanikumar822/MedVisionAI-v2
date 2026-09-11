@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { api } from '../services/api';
+import { api, setCookie, deleteCookie, getCookie } from '../services/api';
 
 interface User {
   id: number;
@@ -11,7 +11,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (token: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   loading: boolean;
 }
 
@@ -23,13 +23,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || getCookie('access_token');
       if (token) {
         try {
           const res = await api.get('/auth/me');
           setUser(res.data);
         } catch (error) {
           localStorage.removeItem('token');
+          deleteCookie('access_token');
         }
       }
       setLoading(false);
@@ -39,13 +40,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (token: string) => {
     localStorage.setItem('token', token);
+    setCookie('access_token', token);
     const res = await api.get('/auth/me');
     setUser(res.data);
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
+  const logout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      // Ignore network errors on logout
+    } finally {
+      localStorage.removeItem('token');
+      deleteCookie('access_token');
+      setUser(null);
+    }
   };
 
   return (
@@ -62,3 +71,4 @@ export const useAuth = () => {
   }
   return context;
 };
+
