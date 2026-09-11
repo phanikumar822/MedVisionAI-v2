@@ -36,47 +36,22 @@ const Landing = () => {
       </header>
 
       {/* Hero */}
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-16 lg:py-24 max-w-6xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] shadow-sm mb-6 text-xs font-bold text-[#C85A32] dark:text-[#E06D44]">
-          <span className="w-2 h-2 rounded-full bg-[#C85A32] animate-pulse"></span>
-          Clinical AI Diagnostic Workspace v2.4
-        </div>
-        
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight max-w-4xl leading-tight text-[#1A1917] dark:text-[#F3F4F6]">
-          Precision Screening for <span className="text-[#C85A32] dark:text-[#E06D44]">Diabetic Retinopathy</span>
+      <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-20 lg:py-28 max-w-5xl mx-auto">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-[#1A1917] dark:text-[#F3F4F6]">
+          Diabetic Retinopathy <span className="text-[#C85A32] dark:text-[#E06D44]">Screening System</span>
         </h1>
         <p className="mt-6 text-base md:text-lg max-w-2xl leading-relaxed text-[#706B63] dark:text-[#9CA3AF]">
-          Upload retinal fundus images, inspect real-time Grad-CAM heatmaps, export Excel clinical registries, and grant patient report access securely.
+          Upload retinal fundus images, inspect diagnostic Grad-CAM heatmaps, export clinical registries in Excel (.xlsx) format, and publish automated PDF reports for your patients.
         </p>
 
-        {/* Quick Portal Action Buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center gap-4">
+        {/* Primary Action Buttons */}
+        <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
           <Link to="/login" className="bg-[#1A1917] dark:bg-[#C85A32] hover:bg-[#3D3A36] dark:hover:bg-[#D96B43] text-white px-8 py-3.5 rounded-xl text-sm font-bold transition shadow-md hover:scale-[1.01] flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4" /> Doctor & Admin Access
+            <ShieldCheck className="w-4 h-4" /> Doctor & Staff Portal
           </Link>
           <Link to="/login" className="bg-white dark:bg-[#16191E] border border-[#E6E1D7] dark:border-[#262B34] text-[#1A1917] dark:text-[#F3F4F6] hover:bg-[#F8F6F0] dark:hover:bg-[#1F242D] px-8 py-3.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
-            <Users className="w-4 h-4 text-[#C85A32]" /> Patient Health Portal
+            <Users className="w-4 h-4 text-[#C85A32]" /> Patient Access
           </Link>
-        </div>
-
-        {/* Executive Stats Strip */}
-        <div className="mt-14 w-full grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] shadow-sm">
-          <div className="p-3 text-center border-r border-[#E6E1D7] dark:border-[#262B34] last:border-r-0">
-            <p className="text-2xl font-black text-[#1A1917] dark:text-[#F3F4F6]">98.6%</p>
-            <p className="text-xs font-semibold text-[#706B63] dark:text-[#9CA3AF] mt-0.5">AI Sensitivity</p>
-          </div>
-          <div className="p-3 text-center border-r border-[#E6E1D7] dark:border-[#262B34] last:border-r-0">
-            <p className="text-2xl font-black text-[#C85A32] dark:text-[#E06D44]">&lt; 2 Sec</p>
-            <p className="text-xs font-semibold text-[#706B63] dark:text-[#9CA3AF] mt-0.5">Grad-CAM Speed</p>
-          </div>
-          <div className="p-3 text-center border-r border-[#E6E1D7] dark:border-[#262B34] last:border-r-0">
-            <p className="text-2xl font-black text-[#2E7D32] dark:text-[#4ADE80]">.XLSX</p>
-            <p className="text-xs font-semibold text-[#706B63] dark:text-[#9CA3AF] mt-0.5">Excel Export Ready</p>
-          </div>
-          <div className="p-3 text-center">
-            <p className="text-2xl font-black text-[#1A1917] dark:text-[#F3F4F6]">AES-256</p>
-            <p className="text-xs font-semibold text-[#706B63] dark:text-[#9CA3AF] mt-0.5">Encrypted Security</p>
-          </div>
         </div>
       </section>
 
