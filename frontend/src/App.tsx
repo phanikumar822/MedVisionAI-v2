@@ -8,7 +8,7 @@ import PatientDashboard from './pages/PatientDashboard';
 import WorkerDashboard from './pages/WorkerDashboard';
 import SetPassword from './pages/SetPassword';
 
-const SpecialistDashboard = () => <div className="p-8"><h1>Specialist Dashboard</h1></div>;
+const SpecialistDashboard = WorkerDashboard;
 
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles: string[] }) => {
   const { user, loading } = useAuth();

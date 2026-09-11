@@ -1,15 +1,46 @@
+:root {
+  /* base */
+  --bg: #10182b;
+  --panel: #17213b;
+  --ink-1: #f1eee4;
+  --ink-2: #9aa3c0;
+  --ink-3: #6c7595;
+
+  /* accents */
+  --accent: #e29a3b;
+  --accent-bg: rgba(226, 154, 59, 0.14);
+  --accent-border: rgba(226, 154, 59, 0.5);
+  --accent-2: #4bc6b9;
+
+  /* structure */
+  --border: rgba(241, 238, 228, 0.12);
+  --border-strong: rgba(241, 238, 228, 0.22);
+  --social-bg: rgba(241, 238, 228, 0.05);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
 .counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  padding: 11px 22px;
+  border-radius: 8px;
+  color: var(--ink-1);
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  box-shadow: inset 0 1px 0 rgba(241, 238, 228, 0.06);
+  transition: border-color 0.2s, background 0.2s;
+
+  span {
+    color: var(--accent);
+    font-weight: 500;
+  }
 
   &:hover {
     border-color: var(--accent-border);
+    background: var(--accent-bg);
   }
   &:focus-visible {
     outline: 2px solid var(--accent);
@@ -19,53 +50,99 @@
 
 .hero {
   position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 4px;
 
   .base,
   .framework,
   .vite {
     inset-inline: 0;
     margin: 0 auto;
+    position: absolute;
   }
 
   .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
+    top: 20px;
+    width: 96px;
+    height: 96px;
+    z-index: 2;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 20px;
+    background: linear-gradient(160deg, var(--panel), var(--bg));
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  .framework,
-  .vite {
-    position: absolute;
+    span {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--accent);
+    }
   }
 
   .framework {
     z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
+    top: 6px;
+    width: 92px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--accent);
+    opacity: 0.92;
+    transform: perspective(900px) rotateX(55deg) rotateZ(-18deg) translateY(4px);
   }
 
   .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
+    z-index: 1;
+    top: 108px;
+    width: 68px;
+    height: 20px;
+    border-radius: 6px;
+    background: var(--accent-2);
+    opacity: 0.85;
+    transform: perspective(900px) rotateX(55deg) rotateZ(-18deg);
   }
 }
 
 #center {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 22px;
   place-content: center;
   place-items: center;
+  text-align: center;
   flex-grow: 1;
+  padding: 56px 32px 44px;
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 27px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink-1);
+  }
+
+  .lede {
+    margin: -10px 0 0;
+    max-width: 34ch;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent);
+      background: var(--accent-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  }
 
   @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
+    padding: 40px 22px 32px;
     gap: 18px;
   }
 }
@@ -77,16 +154,32 @@
 
   & > div {
     flex: 1 1 0;
-    padding: 32px;
+    padding: 30px 32px 34px;
     @media (max-width: 1024px) {
-      padding: 24px 20px;
+      padding: 26px 22px;
     }
   }
 
+  h2 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-1);
+  }
+
+  p {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+
   .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
+    margin-bottom: 14px;
+    width: 20px;
+    height: 20px;
+    color: var(--accent);
   }
 
   @media (max-width: 1024px) {
@@ -108,37 +201,40 @@
   list-style: none;
   padding: 0;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
+  margin: 18px 0 0;
 
   a {
-    color: var(--text-h);
-    font-size: 16px;
+    color: var(--ink-2);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
     border-radius: 6px;
     background: var(--social-bg);
+    border: 1px solid var(--border);
     display: flex;
-    padding: 6px 12px;
+    padding: 6px 11px;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     text-decoration: none;
-    transition: box-shadow 0.3s;
+    transition: border-color 0.2s, color 0.2s;
 
     &:hover {
-      box-shadow: var(--shadow);
+      border-color: var(--accent-border);
+      color: var(--ink-1);
     }
-    .button-icon {
-      height: 18px;
-      width: 18px;
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.5;
+      flex-shrink: 0;
     }
   }
 
   @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
     justify-content: center;
 
     li {
@@ -164,21 +260,30 @@
 .ticks {
   position: relative;
   width: 100%;
+  height: 22px;
+  border-top: 1px solid var(--border);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--border) 0,
+    var(--border) 1px,
+    transparent 1px,
+    transparent 24px
+  );
 
   &::before,
   &::after {
     content: '';
     position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
+    top: -4px;
+    border: 4px solid transparent;
   }
 
   &::before {
     left: 0;
-    border-left-color: var(--border);
+    border-left-color: var(--border-strong);
   }
   &::after {
     right: 0;
-    border-right-color: var(--border);
+    border-right-color: var(--border-strong);
   }
 }
