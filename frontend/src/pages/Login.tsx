@@ -2,27 +2,35 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, CheckCircle2, Sparkles, Activity, MessageSquare } from 'lucide-react';
+import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, Sparkles, Activity, MessageSquare, CheckCircle2, ArrowLeft } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
-  const [mode, setMode] = useState<'doctor' | 'patient'>('doctor');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [isRightPanelActive, setIsRightPanelActive] = useState(false); // false = Doctor Portal, true = Patient Portal
+  
+  // Doctor form state
+  const [docUsername, setDocUsername] = useState('');
+  const [docPassword, setDocPassword] = useState('');
+  const [docError, setDocError] = useState('');
+
+  // Patient form state
+  const [patUsername, setPatUsername] = useState('');
+  const [patPassword, setPatPassword] = useState('');
+  const [patError, setPatError] = useState('');
+
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleDoctorSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setDocError('');
     setLoading(true);
 
     try {
       const formData = new URLSearchParams();
-      formData.append('username', username.trim());
-      formData.append('password', password);
+      formData.append('username', docUsername.trim());
+      formData.append('password', docPassword);
 
       const res = await api.post('/auth/login', formData, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -40,145 +48,124 @@ const Login = () => {
         navigate('/worker');
       }
     } catch (err: any) {
-      setError(err.response?.data?.detail || err.message || 'Invalid username or password. Please try again.');
+      setDocError(err.response?.data?.detail || err.message || 'Invalid doctor username or password.');
     } finally {
       setLoading(false);
     }
   };
 
+  const handlePatientSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPatError('');
+    setLoading(true);
+
+    try {
+      const formData = new URLSearchParams();
+      formData.append('username', patUsername.trim());
+      formData.append('password', patPassword);
+
+      const res = await api.post('/auth/login', formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+
+      const token = res.data.access_token;
+      await login(token);
+
+      const meRes = await api.get('/auth/me');
+      const userData = meRes.data;
+
+      if (userData.role === 'PATIENT') {
+        navigate('/patient');
+      } else {
+        navigate('/worker');
+      }
+    } catch (err: any) {
+      setPatError(err.response?.data?.detail || err.message || 'Invalid patient username or password.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Quick Demo fill handlers
+  const fillDoctorDemo = () => {
+    setDocUsername('worker1');
+    setDocPassword('password123');
+    setDocError('');
+  };
+
+  const fillAdminDemo = () => {
+    setDocUsername('medvision.admin');
+    setDocPassword('admin123');
+    setDocError('');
+  };
+
+  const fillPatientDemo = () => {
+    setPatUsername('patient1');
+    setPatPassword('password123');
+    setPatError('');
+  };
+
   return (
-    <div className="cream-theme-container">
+    <div className="auth-page-root">
       
-      {/* Header */}
-      <header className="cream-navbar">
+      {/* Top Navigation */}
+      <header className="auth-navbar">
         <div className="nav-brand">
           <div className="nav-logo-box">
             <Eye className="w-5 h-5 text-white" />
           </div>
           <span className="nav-brand-text">MedVision<span>AI</span></span>
         </div>
+
+        <div className="nav-right-actions">
+          <span className="system-status-badge">
+            <span className="status-dot"></span> AI Screening Server Active
+          </span>
+        </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="cream-hero-section">
+      {/* Main Container with Sliding Panel */}
+      <main className="auth-hero-container">
         
-        {/* LEFT COLUMN: Content & Form */}
-        <div className="hero-left-column">
+        <div className={`auth-sliding-container ${isRightPanelActive ? 'right-panel-active' : ''}`} id="authContainer">
           
-          {/* Pill Switcher Toggle (Doctor vs Patient) */}
-          <div className="portal-pill-toggle">
-            <div className={`pill-glider ${mode === 'patient' ? 'slide-right' : ''}`}></div>
-            <button
-              type="button"
-              className={`pill-tab ${mode === 'doctor' ? 'active' : ''}`}
-              onClick={() => { setMode('doctor'); setError(''); }}
-            >
-              <ShieldCheck className="w-4 h-4" /> DOCTOR PORTAL
-            </button>
-            <button
-              type="button"
-              className={`pill-tab ${mode === 'patient' ? 'active' : ''}`}
-              onClick={() => { setMode('patient'); setError(''); }}
-            >
-              <UserCheck className="w-4 h-4" /> PATIENT PORTAL
-            </button>
-          </div>
+          {/* ==================== 1. DOCTOR PORTAL FORM (LEFT SIDE) ==================== */}
+          <div className="form-container doctor-portal-container">
+            <form onSubmit={handleDoctorSubmit} className="auth-form">
+              
+              <div className="form-header">
+                <div className="portal-tag doctor-tag">
+                  <ShieldCheck className="w-4 h-4 text-[#0F766E]" /> DOCTOR & CLINICIAN PORTAL
+                </div>
+                <h1 className="form-title">Clinician Sign In</h1>
+                <p className="form-subtitle">Access retinal fundus diagnostic workspace and Grad-CAM AI heatmaps.</p>
+              </div>
 
-          {/* Dynamic Main Heading (Natural Professional Text) */}
-          <div className="hero-heading-container" key={mode}>
-            {mode === 'doctor' ? (
-              <h1 className="cream-hero-title">
-                Diabetic Retinopathy <span>Screening System</span>
-              </h1>
-            ) : (
-              <h1 className="cream-hero-title">
-                Patient Eye Health <span>Portal & Records</span>
-              </h1>
-            )}
-            <p className="hero-subtext">
-              {mode === 'doctor' 
-                ? 'Upload retinal fundus images, review diagnostic heatmap overlays, and publish official clinical reports for your patients.'
-                : 'Sign in to view your screening results, download PDF diagnostic reports, and ask questions about your eye test.'}
-            </p>
-          </div>
+              {docError && <div className="error-banner">{docError}</div>}
 
-          {/* Feature Checklist (Human Language) */}
-          <div className="hero-feature-checklist" key={`list-${mode}`}>
-            {mode === 'doctor' ? (
-              <>
-                <div className="feature-check-item">
-                  <div className="check-icon-box warm">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                  <span>Retinal image analysis & severity grading</span>
-                </div>
-                <div className="feature-check-item">
-                  <div className="check-icon-box warm">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                  <span>Visual Grad-CAM heatmap overlays for doctor review</span>
-                </div>
-                <div className="feature-check-item">
-                  <div className="check-icon-box warm">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                  <span>Exportable PDF patient reports & Excel (.xlsx) database download</span>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="feature-check-item">
-                  <div className="check-icon-box sage">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                  <span>View your latest eye screening status & findings</span>
-                </div>
-                <div className="feature-check-item">
-                  <div className="check-icon-box sage">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                  <span>Download official PDF diagnostic reports anytime</span>
-                </div>
-                <div className="feature-check-item">
-                  <div className="check-icon-box sage">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                  <span>Ask questions about your screening report details</span>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Inline Integrated Login Form */}
-          <div className="cream-form-card" key={`form-${mode}`}>
-            {error && <div className="error-banner-box">{error}</div>}
-
-            <form onSubmit={handleSubmit} className="cream-login-form">
-              <div className="form-row-group">
-                <div className="form-field">
-                  <label>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</label>
-                  <div className="field-input-box">
-                    <User className="w-4 h-4 field-icon" />
+              <div className="form-fields">
+                <div className="input-group">
+                  <label>Doctor / Admin Username</label>
+                  <div className="input-field-wrap">
+                    <User className="input-icon text-[#64748B]" />
                     <input
                       type="text"
-                      className="field-input"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      placeholder={mode === 'doctor' ? 'e.g. dr.screening or medvision.admin' : 'Enter patient username'}
+                      value={docUsername}
+                      onChange={(e) => setDocUsername(e.target.value)}
+                      placeholder="e.g. worker1 or medvision.admin"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="form-field">
+                <div className="input-group">
                   <label>Password</label>
-                  <div className="field-input-box">
-                    <Lock className="w-4 h-4 field-icon" />
+                  <div className="input-field-wrap">
+                    <Lock className="input-icon text-[#64748B]" />
                     <input
                       type="password"
-                      className="field-input"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={docPassword}
+                      onChange={(e) => setDocPassword(e.target.value)}
                       placeholder="Enter password"
                       required
                     />
@@ -186,49 +173,164 @@ const Login = () => {
                 </div>
               </div>
 
-              <div className="form-action-row">
-                <button type="submit" className="cream-submit-btn" disabled={loading}>
-                  <Sparkles className="w-4 h-4" />
-                  {loading ? 'Signing in...' : `Sign In to ${mode === 'doctor' ? 'Doctor Portal' : 'Patient Portal'}`}
-                  <ArrowRight className="w-4 h-4" />
+              <button type="submit" className="submit-btn doctor-submit-btn" disabled={loading}>
+                <Sparkles className="w-4 h-4" />
+                {loading ? 'Authenticating...' : 'Sign In to Doctor Portal'}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              {/* Quick Demo Credentials */}
+              <div className="demo-credentials-box">
+                <span className="demo-title">Quick Demo Login:</span>
+                <div className="demo-btn-group">
+                  <button type="button" onClick={fillDoctorDemo} className="demo-chip">
+                    Dr. Worker (`worker1`)
+                  </button>
+                  <button type="button" onClick={fillAdminDemo} className="demo-chip admin-chip">
+                    Admin (`medvision.admin`)
+                  </button>
+                </div>
+              </div>
+
+              <p className="mobile-switch-hint md:hidden">
+                Are you a Patient?{' '}
+                <button type="button" onClick={() => setIsRightPanelActive(true)} className="mobile-switch-btn">
+                  Switch to Patient Portal →
+                </button>
+              </p>
+            </form>
+          </div>
+
+          {/* ==================== 2. PATIENT PORTAL FORM (RIGHT SIDE) ==================== */}
+          <div className="form-container patient-portal-container">
+            <form onSubmit={handlePatientSubmit} className="auth-form">
+              
+              <div className="form-header">
+                <div className="portal-tag patient-tag">
+                  <UserCheck className="w-4 h-4 text-[#047857]" /> PATIENT HEALTH PORTAL
+                </div>
+                <h1 className="form-title">Patient Sign In</h1>
+                <p className="form-subtitle">View your DR screening results, download PDF reports, & ask AI assistant.</p>
+              </div>
+
+              {patError && <div className="error-banner">{patError}</div>}
+
+              <div className="form-fields">
+                <div className="input-group">
+                  <label>Patient Username</label>
+                  <div className="input-field-wrap">
+                    <User className="input-icon text-[#64748B]" />
+                    <input
+                      type="text"
+                      value={patUsername}
+                      onChange={(e) => setPatUsername(e.target.value)}
+                      placeholder="e.g. patient1"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="input-group">
+                  <label>Password</label>
+                  <div className="input-field-wrap">
+                    <Lock className="input-icon text-[#64748B]" />
+                    <input
+                      type="password"
+                      value={patPassword}
+                      onChange={(e) => setPatPassword(e.target.value)}
+                      placeholder="Enter password"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" className="submit-btn patient-submit-btn" disabled={loading}>
+                <Sparkles className="w-4 h-4" />
+                {loading ? 'Authenticating...' : 'Sign In to Patient Portal'}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              {/* Quick Demo Credentials */}
+              <div className="demo-credentials-box">
+                <span className="demo-title">Quick Demo Login:</span>
+                <button type="button" onClick={fillPatientDemo} className="demo-chip patient-chip">
+                  Patient (`patient1`)
                 </button>
               </div>
+
+              <p className="mobile-switch-hint md:hidden">
+                Are you a Doctor?{' '}
+                <button type="button" onClick={() => setIsRightPanelActive(false)} className="mobile-switch-btn">
+                  Switch to Doctor Portal →
+                </button>
+              </p>
             </form>
-
-            <div className="cream-hint">
-              {mode === 'doctor'
-                ? '🔒 Admin credentials (`medvision.admin`) provide complete system access & Excel data export.'
-                : '🔑 Patients sign in using credentials sent to their email.'}
-            </div>
           </div>
 
-        </div>
-
-        {/* RIGHT COLUMN: Dynamic Portal Image Showcase */}
-        <div className="hero-right-column">
-          <div className="hero-image-frame-card">
-            
-            {/* Display relevant image based on selected portal */}
-            <div className="image-wrapper" key={`img-${mode}`}>
-              <img
-                src={mode === 'doctor' ? '/assets/doctor_portal_hero.jpg' : '/assets/patient_portal_hero.jpg'}
-                alt={mode === 'doctor' ? 'Doctor Workspace' : 'Patient Portal'}
-                className="portal-showcase-img"
-              />
-
-              {/* Floating Overlay Badge */}
-              <div className="floating-portal-badge">
-                <div className="badge-icon-wrap">
-                  {mode === 'doctor' ? <Activity className="w-4 h-4 text-[#0F766E]" /> : <MessageSquare className="w-4 h-4 text-[#047857]" />}
+          {/* ==================== 3. ORANGE SLIDING OVERLAY CONTAINER ==================== */}
+          <div className="overlay-container">
+            <div className="overlay">
+              
+              {/* Left Overlay Panel (Shown when Patient form is active on right) */}
+              <div className="overlay-panel overlay-left">
+                <div className="overlay-badge">
+                  <Activity className="w-4 h-4 text-white" /> Clinician Diagnostic Suite
                 </div>
-                <div className="badge-content-text">
-                  <span className="badge-title">{mode === 'doctor' ? 'Clinical Workspace' : 'Patient Portal App'}</span>
-                  <span className="badge-subtitle">{mode === 'doctor' ? 'Grad-CAM DR Heatmaps' : 'Health Assistant'}</span>
+                <h1 className="overlay-title">Doctor Portal</h1>
+                <p className="overlay-text">
+                  Are you a Healthcare Professional? Sign in to run AI inference on retinal fundus scans, inspect Grad-CAM heatmaps, and publish official patient reports.
+                </p>
+
+                {/* Portal Showcase Image Frame */}
+                <div className="overlay-image-card">
+                  <img src="/assets/doctor_portal_hero.jpg" alt="Doctor Portal Preview" className="overlay-img" />
+                  <div className="overlay-img-caption">
+                    <Activity className="w-3.5 h-3.5 text-teal-400" />
+                    <span>Grad-CAM DR Heatmap Diagnostics</span>
+                  </div>
                 </div>
+
+                <button 
+                  type="button" 
+                  className="ghost-toggle-btn" 
+                  onClick={() => setIsRightPanelActive(false)}
+                >
+                  <ArrowLeft className="w-4 h-4" /> Switch to Doctor Portal
+                </button>
               </div>
-            </div>
 
+              {/* Right Overlay Panel (Shown when Doctor form is active on left) */}
+              <div className="overlay-panel overlay-right">
+                <div className="overlay-badge">
+                  <MessageSquare className="w-4 h-4 text-white" /> Patient Health Records
+                </div>
+                <h1 className="overlay-title">Patient Portal</h1>
+                <p className="overlay-text">
+                  Looking for your screening results? Sign in to view your latest eye test report, download official clinical PDFs, and chat with our RAG diagnostic assistant.
+                </p>
+
+                {/* Portal Showcase Image Frame */}
+                <div className="overlay-image-card">
+                  <img src="/assets/patient_portal_hero.jpg" alt="Patient Portal Preview" className="overlay-img" />
+                  <div className="overlay-img-caption">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Grounded Diagnostic PDF & Assistant</span>
+                  </div>
+                </div>
+
+                <button 
+                  type="button" 
+                  className="ghost-toggle-btn" 
+                  onClick={() => setIsRightPanelActive(true)}
+                >
+                  Switch to Patient Portal <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+
+            </div>
           </div>
+
         </div>
 
       </main>
@@ -238,7 +340,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
-
-
