@@ -147,53 +147,117 @@ const WorkerDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] transition-colors duration-300">
+    <div className="min-h-screen flex bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] transition-colors duration-200">
       
-      {/* Header */}
-      <header className="bg-white/90 dark:bg-[#16191E]/90 border-b border-[#E6E1D7] dark:border-[#262B34] sticky top-0 z-40 backdrop-blur-md transition-colors duration-300">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#1E1E1E] dark:bg-[#C85A32] flex items-center justify-center shadow-sm">
+      {/* LEFT SIDEBAR NAVIGATION */}
+      <aside className="w-64 border-r border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] hidden md:flex flex-col justify-between shrink-0 h-screen sticky top-0 z-30 p-4">
+        <div className="space-y-6">
+          
+          {/* Sidebar Brand Header */}
+          <div className="flex items-center gap-3 px-2 py-1">
+            <div className="w-9 h-9 rounded-xl bg-[#1A1917] dark:bg-[#C85A32] flex items-center justify-center shadow-sm">
               <Eye className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-extrabold tracking-tight text-[#1A1917] dark:text-[#F3F4F6]">Clinical Screening Suite</h1>
+            <div>
+              <h1 className="text-base font-extrabold tracking-tight text-[#1A1917] dark:text-[#F3F4F6]">MedVision<span className="text-[#C85A32] dark:text-[#E06D44]">AI</span></h1>
+              <p className="text-[11px] text-[#706B63] dark:text-[#9CA3AF]">Clinical Diagnostics</p>
+            </div>
+          </div>
+
+          {/* Sidebar Navigation Menu */}
+          <nav className="space-y-1">
+            {[
+              { id: 'screen', label: 'Retinal Screening', icon: Activity },
+              { id: 'patients', label: 'Patient Directory', icon: Users },
+              { id: 'new-patient', label: 'Register Patient', icon: UserPlus },
+            ].map((item) => {
+              const Icon = item.icon;
+              const active = tab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setTab(item.id as any)}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    active
+                      ? 'bg-[#1A1917] dark:bg-[#C85A32] text-white shadow-sm'
+                      : 'text-[#706B63] dark:text-[#9CA3AF] hover:bg-[#F8F6F0] dark:hover:bg-[#20242D] hover:text-[#1A1917] dark:hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Sidebar Footer User Profile Card */}
+        <div className="pt-4 border-t border-[#E6E1D7] dark:border-[#262B34] space-y-3">
+          <div className="flex items-center justify-between px-2">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#F8F6F0] dark:bg-[#20242D] border border-[#E6E1D7] dark:border-[#262B34] flex items-center justify-center font-bold text-xs text-[#C85A32]">
+                DR
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-xs font-bold text-[#1A1917] dark:text-[#F3F4F6] truncate">Clinical Portal</p>
+                <p className="text-[10px] text-[#706B63] dark:text-[#9CA3AF] truncate">Practitioner Access</p>
+              </div>
+            </div>
+            <button
+              onClick={logout}
+              className="p-1.5 rounded-lg border border-[#E6E1D7] dark:border-[#262B34] text-[#706B63] dark:text-[#9CA3AF] hover:text-[#1A1917] dark:hover:text-white transition cursor-pointer"
+              title="Sign Out"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* RIGHT MAIN WORKSPACE */}
+      <div className="flex-1 flex flex-col min-w-0">
+        
+        {/* Top Bar Header */}
+        <header className="bg-white/90 dark:bg-[#16191E]/90 border-b border-[#E6E1D7] dark:border-[#262B34] sticky top-0 z-20 backdrop-blur-md px-6 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#706B63] dark:text-[#9CA3AF]">MedVisionAI</span>
+            <span className="text-xs text-[#706B63] dark:text-[#9CA3AF]">/</span>
+            <span className="text-xs font-extrabold text-[#1A1917] dark:text-[#F3F4F6]">
+              {tab === 'screen' ? 'Retinal Screening Workspace' : tab === 'patients' ? 'Patient Registry Directory' : 'New Patient Registration'}
+            </span>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex space-x-2">
+            {/* Mobile Tab Switcher */}
+            <div className="flex md:hidden space-x-1">
               {(['screen', 'patients', 'new-patient'] as const).map(t => (
                 <button key={t} onClick={() => setTab(t)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
-                    tab === t 
-                      ? 'bg-[#C85A32] text-white shadow-sm' 
-                      : 'bg-[#F0ECDF] dark:bg-[#20242D] text-[#6E6A63] dark:text-[#9CA3AF] hover:bg-[#E6E1D7] dark:hover:bg-[#2C323E] hover:text-[#1A1917] dark:hover:text-[#F3F4F6]'
+                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold ${
+                    tab === t ? 'bg-[#C85A32] text-white' : 'bg-[#F8F6F0] dark:bg-[#20242D] text-[#706B63]'
                   }`}>
-                  {t === 'screen' ? '🔬 Run Screening' : t === 'patients' ? '👥 Patient Directory' : '➕ Register Patient'}
+                  {t === 'screen' ? 'Screen' : t === 'patients' ? 'Patients' : 'Add'}
                 </button>
               ))}
             </div>
 
             <button
-              onClick={toggleTheme}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#20242D] text-[#1A1917] dark:text-[#F3F4F6] hover:bg-[#F0ECDF] dark:hover:bg-[#2C323E] transition shadow-sm"
-              title="Toggle Light/Dark Theme"
+              onClick={handleExportExcel}
+              className="hidden sm:flex items-center gap-1.5 bg-[#2E7D32] hover:bg-[#256628] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition cursor-pointer"
             >
-              {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-[#6E6A63]" />}
-              <span className="hidden sm:inline">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+              <Download className="w-3.5 h-3.5" /> Export Excel (.xlsx)
             </button>
 
             <button
-              onClick={logout}
-              className="p-2 rounded-xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#20242D] text-[#6E6A63] dark:text-[#9CA3AF] hover:text-[#1A1917] dark:hover:text-[#F3F4F6] hover:bg-[#F0ECDF] dark:hover:bg-[#2C323E] transition"
-              title="Sign Out"
+              onClick={toggleTheme}
+              className="p-2 rounded-xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] text-[#706B63] dark:text-[#9CA3AF] hover:text-[#1A1917] dark:hover:text-white transition shadow-sm cursor-pointer"
+              title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
             >
-              <LogOut className="w-4 h-4" />
+              {theme === 'light' ? <Moon className="w-4 h-4 text-[#C85A32]" /> : <Sun className="w-4 h-4 text-amber-400" />}
             </button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
 
         {/* Top Clinical Stats Summary Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -517,7 +581,8 @@ const WorkerDashboard = () => {
         )}
       </main>
     </div>
-  );
+  </div>
+);
 };
 
 export default WorkerDashboard;
