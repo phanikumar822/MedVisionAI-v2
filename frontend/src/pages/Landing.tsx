@@ -87,28 +87,29 @@ const Landing = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5 text-center">
                   <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider block">Original Fundus</span>
-                  <div className="aspect-square bg-black rounded-lg overflow-hidden border border-[#1E293B] shadow-inner relative">
+                  <div className="aspect-square bg-[#050811] rounded-lg overflow-hidden border border-[#1E293B] p-2 flex items-center justify-center relative shadow-inner">
                     <img 
                       src="/assets/hero_fundus.png" 
                       alt="Original Retinal Scan" 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
-                    <div className="absolute bottom-1.5 left-1.5 bg-black/70 text-[9px] text-[#CBD5E1] px-1.5 py-0.5 rounded font-mono">
-                      FUNDUS_SCAN.PNG
+                    <div className="absolute bottom-1.5 left-1.5 bg-black/80 border border-slate-800 text-[9px] text-[#94A3B8] px-1.5 py-0.5 rounded font-mono">
+                      ORIGINAL SCAN
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-1.5 text-center">
                   <span className="text-[10px] font-bold text-[#2DD4BF] uppercase tracking-wider block">AI Attention (Grad-CAM)</span>
-                  <div className="aspect-square bg-black rounded-lg overflow-hidden border border-[#0F766E]/50 shadow-inner relative">
+                  <div className="aspect-square bg-[#050811] rounded-lg overflow-hidden border border-[#0F766E]/50 p-2 flex items-center justify-center relative shadow-inner">
                     <img 
-                      src="/assets/hero_heatmap.jpg" 
+                      src="/assets/hero_heatmap_overlay.png" 
                       alt="Grad-CAM Attention Heatmap" 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
-                    <div className="absolute bottom-1.5 left-1.5 bg-black/70 text-[9px] text-[#2DD4BF] px-1.5 py-0.5 rounded font-mono">
-                      GRADCAM_OVERLAY
+                    <div className="absolute bottom-1.5 left-1.5 bg-black/80 border border-teal-900 text-[9px] text-[#2DD4BF] px-1.5 py-0.5 rounded font-mono flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#2DD4BF]"></span>
+                      HEATMAP (40% OVERLAY)
                     </div>
                   </div>
                 </div>
