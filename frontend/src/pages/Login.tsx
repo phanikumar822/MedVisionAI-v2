@@ -86,25 +86,6 @@ const Login = () => {
     }
   };
 
-  // Quick Demo fill handlers
-  const fillDoctorDemo = () => {
-    setDocUsername('worker1');
-    setDocPassword('password123');
-    setDocError('');
-  };
-
-  const fillAdminDemo = () => {
-    setDocUsername('medvision.admin');
-    setDocPassword('admin123');
-    setDocError('');
-  };
-
-  const fillPatientDemo = () => {
-    setPatUsername('patient1');
-    setPatPassword('password123');
-    setPatError('');
-  };
-
   return (
     <div className="auth-page-root">
       
@@ -115,12 +96,6 @@ const Login = () => {
             <Eye className="w-5 h-5 text-white" />
           </div>
           <span className="nav-brand-text">MedVision<span>AI</span></span>
-        </div>
-
-        <div className="nav-right-actions">
-          <span className="system-status-badge">
-            <span className="status-dot"></span> AI Screening Server Active
-          </span>
         </div>
       </header>
 
@@ -152,7 +127,7 @@ const Login = () => {
                       type="text"
                       value={docUsername}
                       onChange={(e) => setDocUsername(e.target.value)}
-                      placeholder="e.g. worker1 or medvision.admin"
+                      placeholder="Enter username"
                       required
                     />
                   </div>
@@ -178,19 +153,6 @@ const Login = () => {
                 {loading ? 'Authenticating...' : 'Sign In to Doctor Portal'}
                 <ArrowRight className="w-4 h-4" />
               </button>
-
-              {/* Quick Demo Credentials */}
-              <div className="demo-credentials-box">
-                <span className="demo-title">Quick Demo Login:</span>
-                <div className="demo-btn-group">
-                  <button type="button" onClick={fillDoctorDemo} className="demo-chip">
-                    Dr. Worker (`worker1`)
-                  </button>
-                  <button type="button" onClick={fillAdminDemo} className="demo-chip admin-chip">
-                    Admin (`medvision.admin`)
-                  </button>
-                </div>
-              </div>
 
               <p className="mobile-switch-hint md:hidden">
                 Are you a Patient?{' '}
@@ -224,7 +186,7 @@ const Login = () => {
                       type="text"
                       value={patUsername}
                       onChange={(e) => setPatUsername(e.target.value)}
-                      placeholder="e.g. patient1"
+                      placeholder="Enter patient username"
                       required
                     />
                   </div>
@@ -250,14 +212,6 @@ const Login = () => {
                 {loading ? 'Authenticating...' : 'Sign In to Patient Portal'}
                 <ArrowRight className="w-4 h-4" />
               </button>
-
-              {/* Quick Demo Credentials */}
-              <div className="demo-credentials-box">
-                <span className="demo-title">Quick Demo Login:</span>
-                <button type="button" onClick={fillPatientDemo} className="demo-chip patient-chip">
-                  Patient (`patient1`)
-                </button>
-              </div>
 
               <p className="mobile-switch-hint md:hidden">
                 Are you a Doctor?{' '}
