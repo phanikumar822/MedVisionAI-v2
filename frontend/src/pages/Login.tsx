@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import { api } from '../services/api';
-import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, CheckCircle2, Sparkles, Activity, MessageSquare, Sun, Moon } from 'lucide-react';
+import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, CheckCircle2, Sparkles, Activity, MessageSquare } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
@@ -13,7 +12,6 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,15 +56,6 @@ const Login = () => {
             <Eye className="w-5 h-5 text-white" />
           </div>
           <span className="nav-brand-text">MedVision<span>AI</span></span>
-        </div>
-        <div className="nav-right-actions">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] text-[#706B63] dark:text-[#9CA3AF] hover:text-[#1A1917] dark:hover:text-white transition shadow-sm cursor-pointer"
-            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-          >
-            {theme === 'light' ? <Moon className="w-4 h-4 text-[#C85A32]" /> : <Sun className="w-4 h-4 text-amber-400" />}
-          </button>
         </div>
       </header>
 
@@ -160,7 +149,7 @@ const Login = () => {
             )}
           </div>
 
-          {/* Inline Integrated Login Form Card */}
+          {/* Inline Integrated Login Form */}
           <div className="cream-form-card" key={`form-${mode}`}>
             {error && <div className="error-banner-box">{error}</div>}
 

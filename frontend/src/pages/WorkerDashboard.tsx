@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
-import { Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, Download, LogOut, Activity, Sparkles, Sun, Moon } from 'lucide-react';
+import { Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, Download, LogOut, Activity, Sparkles } from 'lucide-react';
 
 interface Patient { id: number; name: string; patient_access_id: string; email: string; username: string; }
 interface ScreeningResult { 
@@ -28,7 +27,6 @@ interface Stats {
 
 const WorkerDashboard = () => {
   const { logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const [tab, setTab] = useState<'screen' | 'patients' | 'new-patient'>('screen');
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatientId, setSelectedPatientId] = useState('');
@@ -38,16 +36,9 @@ const WorkerDashboard = () => {
   const [reportStatus, setReportStatus] = useState<'idle' | 'generating' | 'done'>('idle');
   const [stats, setStats] = useState<Stats | null>(null);
 
+  // New patient form state
   const [newPatient, setNewPatient] = useState({ first_name: '', last_name: '', email: '', phone: '' });
   const [createdPatient, setCreatedPatient] = useState<any>(null);
-  const [patientSearch, setPatientSearch] = useState('');
-
-  const filteredPatients = patients.filter(p => 
-    p.name.toLowerCase().includes(patientSearch.toLowerCase()) ||
-    p.patient_access_id.toLowerCase().includes(patientSearch.toLowerCase()) ||
-    (p.email && p.email.toLowerCase().includes(patientSearch.toLowerCase())) ||
-    p.username.toLowerCase().includes(patientSearch.toLowerCase())
-  );
 
   useEffect(() => {
     fetchPatients();
@@ -147,157 +138,84 @@ const WorkerDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] transition-colors duration-200">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#23211E]">
       
-      {/* LEFT SIDEBAR NAVIGATION */}
-      <aside className="w-64 border-r border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] hidden md:flex flex-col justify-between shrink-0 h-screen sticky top-0 z-30 p-4">
-        <div className="space-y-6">
-          
-          {/* Sidebar Brand Header */}
-          <div className="flex items-center gap-3 px-2 py-1">
-            <div className="w-9 h-9 rounded-xl bg-[#1A1917] dark:bg-[#C85A32] flex items-center justify-center shadow-sm">
+      {/* Header */}
+      <header className="bg-white border-b border-[#EBE5DD] sticky top-0 z-40 backdrop-blur-md">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#1E1E1E] flex items-center justify-center shadow-sm">
               <Eye className="w-5 h-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-base font-extrabold tracking-tight text-[#1A1917] dark:text-[#F3F4F6]">MedVision<span className="text-[#C85A32] dark:text-[#E06D44]">AI</span></h1>
-              <p className="text-[11px] text-[#706B63] dark:text-[#9CA3AF]">Clinical Diagnostics</p>
-            </div>
-          </div>
-
-          {/* Sidebar Navigation Menu */}
-          <nav className="space-y-1">
-            {[
-              { id: 'screen', label: 'Retinal Screening', icon: Activity },
-              { id: 'patients', label: 'Patient Directory', icon: Users },
-              { id: 'new-patient', label: 'Register Patient', icon: UserPlus },
-            ].map((item) => {
-              const Icon = item.icon;
-              const active = tab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setTab(item.id as any)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-                    active
-                      ? 'bg-[#1A1917] dark:bg-[#C85A32] text-white shadow-sm'
-                      : 'text-[#706B63] dark:text-[#9CA3AF] hover:bg-[#F8F6F0] dark:hover:bg-[#20242D] hover:text-[#1A1917] dark:hover:text-white'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Sidebar Footer User Profile Card */}
-        <div className="pt-4 border-t border-[#E6E1D7] dark:border-[#262B34] space-y-3">
-          <div className="flex items-center justify-between px-2">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#F8F6F0] dark:bg-[#20242D] border border-[#E6E1D7] dark:border-[#262B34] flex items-center justify-center font-bold text-xs text-[#C85A32]">
-                DR
-              </div>
-              <div className="overflow-hidden">
-                <p className="text-xs font-bold text-[#1A1917] dark:text-[#F3F4F6] truncate">Clinical Portal</p>
-                <p className="text-[10px] text-[#706B63] dark:text-[#9CA3AF] truncate">Practitioner Access</p>
-              </div>
-            </div>
-            <button
-              onClick={logout}
-              className="p-1.5 rounded-lg border border-[#E6E1D7] dark:border-[#262B34] text-[#706B63] dark:text-[#9CA3AF] hover:text-[#1A1917] dark:hover:text-white transition cursor-pointer"
-              title="Sign Out"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* RIGHT MAIN WORKSPACE */}
-      <div className="flex-1 flex flex-col min-w-0">
-        
-        {/* Top Bar Header */}
-        <header className="bg-white/90 dark:bg-[#16191E]/90 border-b border-[#E6E1D7] dark:border-[#262B34] sticky top-0 z-20 backdrop-blur-md px-6 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-[#706B63] dark:text-[#9CA3AF]">MedVisionAI</span>
-            <span className="text-xs text-[#706B63] dark:text-[#9CA3AF]">/</span>
-            <span className="text-xs font-extrabold text-[#1A1917] dark:text-[#F3F4F6]">
-              {tab === 'screen' ? 'Retinal Screening Workspace' : tab === 'patients' ? 'Patient Registry Directory' : 'New Patient Registration'}
-            </span>
+            <h1 className="text-xl font-extrabold tracking-tight text-[#23211E]">Clinical Screening Suite</h1>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Mobile Tab Switcher */}
-            <div className="flex md:hidden space-x-1">
+            <div className="flex space-x-2">
               {(['screen', 'patients', 'new-patient'] as const).map(t => (
                 <button key={t} onClick={() => setTab(t)}
-                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold ${
-                    tab === t ? 'bg-[#C85A32] text-white' : 'bg-[#F8F6F0] dark:bg-[#20242D] text-[#706B63]'
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
+                    tab === t 
+                      ? 'bg-[#C85A32] text-white shadow-sm' 
+                      : 'bg-[#F5F0E8] text-[#706B63] hover:bg-[#EBE5DD] hover:text-[#23211E]'
                   }`}>
-                  {t === 'screen' ? 'Screen' : t === 'patients' ? 'Patients' : 'Add'}
+                  {t === 'screen' ? '🔬 Run Screening' : t === 'patients' ? '👥 Patient Directory' : '➕ Register Patient'}
                 </button>
               ))}
             </div>
 
             <button
-              onClick={handleExportExcel}
-              className="hidden sm:flex items-center gap-1.5 bg-[#2E7D32] hover:bg-[#256628] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition cursor-pointer"
+              onClick={logout}
+              className="p-2 rounded-xl border border-[#EBE5DD] bg-white text-[#706B63] hover:text-[#23211E] hover:bg-[#F5F0E8] transition"
+              title="Sign Out"
             >
-              <Download className="w-3.5 h-3.5" /> Export Excel (.xlsx)
-            </button>
-
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] text-[#706B63] dark:text-[#9CA3AF] hover:text-[#1A1917] dark:hover:text-white transition shadow-sm cursor-pointer"
-              title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-            >
-              {theme === 'light' ? <Moon className="w-4 h-4 text-[#C85A32]" /> : <Sun className="w-4 h-4 text-amber-400" />}
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
-        </header>
+        </div>
+      </header>
 
-        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main className="max-w-5xl mx-auto px-4 py-8">
 
         {/* Top Clinical Stats Summary Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white dark:bg-[#16191E] border border-[#E6E1D7] dark:border-[#262B34] p-4 rounded-2xl shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#C85A32]/10 dark:bg-[#C85A32]/20 text-[#C85A32] flex items-center justify-center font-bold">
+          <div className="bg-white border border-[#EBE5DD] p-4 rounded-2xl shadow-sm flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#C85A32]/10 text-[#C85A32] flex items-center justify-center font-bold">
               <Activity className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF]">Screenings Today</p>
-              <p className="text-xl font-extrabold text-[#1A1917] dark:text-[#F3F4F6]">{stats?.screenings_today ?? 0}</p>
+              <p className="text-xs text-[#706B63]">Screenings Today</p>
+              <p className="text-xl font-extrabold text-[#23211E]">{stats?.screenings_today ?? 0}</p>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#16191E] border border-[#E6E1D7] dark:border-[#262B34] p-4 rounded-2xl shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#1E1E1E]/5 dark:bg-white/10 text-[#1A1917] dark:text-[#F3F4F6] flex items-center justify-center font-bold">
-              <Users className="w-5 h-5" />
+          <div className="bg-white border border-[#EBE5DD] p-4 rounded-2xl shadow-sm flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#1E1E1E]/5 text-[#1E1E1E] flex items-center justify-center font-bold">
+              <Users className="w-5 h-5 text-[#23211E]" />
             </div>
             <div>
-              <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF]">Total Patients</p>
-              <p className="text-xl font-extrabold text-[#1A1917] dark:text-[#F3F4F6]">{patients.length}</p>
+              <p className="text-xs text-[#706B63]">Total Patients</p>
+              <p className="text-xl font-extrabold text-[#23211E]">{patients.length}</p>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#16191E] border border-[#E6E1D7] dark:border-[#262B34] p-4 rounded-2xl shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 flex items-center justify-center font-bold">
-              <Eye className="w-5 h-5" />
+          <div className="bg-white border border-[#EBE5DD] p-4 rounded-2xl shadow-sm flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold">
+              <Eye className="w-5 h-5 text-purple-700" />
             </div>
             <div>
-              <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF]">Total Screenings</p>
-              <p className="text-xl font-extrabold text-[#1A1917] dark:text-[#F3F4F6]">{stats?.total_screenings ?? 0}</p>
+              <p className="text-xs text-[#706B63]">Total Screenings</p>
+              <p className="text-xl font-extrabold text-[#23211E]">{stats?.total_screenings ?? 0}</p>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#16191E] border border-[#E6E1D7] dark:border-[#262B34] p-4 rounded-2xl shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
-              <AlertTriangle className="w-5 h-5" />
+          <div className="bg-white border border-[#EBE5DD] p-4 rounded-2xl shadow-sm flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+              <AlertTriangle className="w-5 h-5 text-rose-600" />
             </div>
             <div>
-              <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF]">DR Detected Cases</p>
-              <p className="text-xl font-extrabold text-rose-600 dark:text-rose-400">{stats?.dr_present_count ?? 0}</p>
+              <p className="text-xs text-[#706B63]">DR Detected Cases</p>
+              <p className="text-xl font-extrabold text-rose-600">{stats?.dr_present_count ?? 0}</p>
             </div>
           </div>
         </div>
@@ -305,28 +223,28 @@ const WorkerDashboard = () => {
         {/* === RUN SCREENING TAB === */}
         {tab === 'screen' && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] shadow-sm">
-              <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2 text-[#1A1917] dark:text-[#F3F4F6]">
+            <div className="p-6 rounded-2xl border border-[#EBE5DD] bg-white shadow-sm">
+              <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2 text-[#23211E]">
                 <Upload className="w-5 h-5 text-[#C85A32]" /> New Retinal Screening
               </h2>
               <form onSubmit={handleUpload} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#6E6A63] dark:text-[#9CA3AF]">Select Patient Profile</label>
+                  <label className="block text-xs font-semibold mb-1 text-[#706B63]">Select Patient Profile</label>
                   <select value={selectedPatientId} onChange={e => setSelectedPatientId(e.target.value)}
-                    className="w-full border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] rounded-xl p-2.5 text-sm outline-none focus:border-[#C85A32]" required>
+                    className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-sm outline-none focus:border-[#C85A32]" required>
                     <option value="">— Select a patient profile —</option>
                     {patients.map(p => (
                       <option key={p.id} value={p.id}>{p.name} ({p.patient_access_id})</option>
                     ))}
                   </select>
                   {patients.length === 0 && (
-                    <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">No patient profiles registered yet. <button type="button" onClick={() => setTab('new-patient')} className="underline font-semibold">Register patient profile →</button></p>
+                    <p className="text-xs text-amber-700 mt-1">No patient profiles registered yet. <button type="button" onClick={() => setTab('new-patient')} className="underline font-semibold">Register patient profile →</button></p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#6E6A63] dark:text-[#9CA3AF]">Retinal Fundus Image</label>
+                  <label className="block text-xs font-semibold mb-1 text-[#706B63]">Retinal Fundus Image</label>
                   <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)}
-                    className="w-full border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] rounded-xl p-2 text-sm outline-none focus:border-[#C85A32]" required />
+                    className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2 text-sm outline-none focus:border-[#C85A32]" required />
                 </div>
                 <button type="submit" disabled={loading || !selectedPatientId}
                   className="w-full bg-[#C85A32] hover:bg-[#B34E2B] disabled:opacity-40 text-white px-6 py-3 rounded-xl font-bold transition shadow-sm">
@@ -336,16 +254,16 @@ const WorkerDashboard = () => {
             </div>
 
             {result && (
-              <div className="p-6 rounded-2xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] shadow-sm space-y-6">
-                <div className="flex justify-between items-center border-b border-[#E6E1D7] dark:border-[#262B34] pb-4">
+              <div className="p-6 rounded-2xl border border-[#EBE5DD] bg-white shadow-sm space-y-6">
+                <div className="flex justify-between items-center border-b border-[#EBE5DD] pb-4">
                   <div>
-                    <h2 className="text-xl font-extrabold flex items-center gap-2 text-[#1A1917] dark:text-[#F3F4F6]">
-                      <Eye className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Screening Diagnostic & Gradient Heatmap
+                    <h2 className="text-xl font-extrabold flex items-center gap-2 text-[#23211E]">
+                      <Eye className="w-5 h-5 text-emerald-600" /> Screening Diagnostic & Gradient Heatmap
                     </h2>
-                    <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF] mt-0.5">Screening Ref: <span className="font-mono font-bold text-[#1A1917] dark:text-[#F3F4F6]">{result.screening_id}</span></p>
+                    <p className="text-xs text-[#706B63] mt-0.5">Screening Ref: <span className="font-mono font-bold text-[#23211E]">{result.screening_id}</span></p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-extrabold border ${
-                    result.prediction === 'DR PRESENT' ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300' : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
+                    result.prediction === 'DR PRESENT' ? 'bg-rose-50 border-rose-200 text-rose-700' : 'bg-emerald-50 border-emerald-200 text-emerald-700'
                   }`}>
                     {result.prediction}
                   </span>
@@ -353,27 +271,27 @@ const WorkerDashboard = () => {
 
                 {/* Main Metrics Summary */}
                 <div className="grid md:grid-cols-3 gap-4">
-                  <div className="p-4 rounded-xl border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-center">
-                    <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF] mb-1">Diagnostic Finding</p>
-                    <p className={`text-2xl font-black ${result.prediction === 'DR PRESENT' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'}`}>{result.prediction}</p>
+                  <div className="p-4 rounded-xl border border-[#EBE5DD] bg-[#FAF7F2] text-center">
+                    <p className="text-xs text-[#706B63] mb-1">Diagnostic Finding</p>
+                    <p className={`text-2xl font-black ${result.prediction === 'DR PRESENT' ? 'text-rose-600' : 'text-emerald-700'}`}>{result.prediction}</p>
                   </div>
-                  <div className="p-4 rounded-xl border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-center">
-                    <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF] mb-1">Model Confidence</p>
-                    <p className="text-2xl font-black text-[#1A1917] dark:text-[#F3F4F6]">{(result.confidence * 100).toFixed(1)}%</p>
+                  <div className="p-4 rounded-xl border border-[#EBE5DD] bg-[#FAF7F2] text-center">
+                    <p className="text-xs text-[#706B63] mb-1">Model Confidence</p>
+                    <p className="text-2xl font-black text-[#23211E]">{(result.confidence * 100).toFixed(1)}%</p>
                   </div>
-                  <div className="p-4 rounded-xl border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-center">
-                    <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF] mb-1">Assessed Risk Level</p>
-                    <p className="text-xl font-bold text-[#1A1917] dark:text-[#F3F4F6]">{result.risk_level}</p>
+                  <div className="p-4 rounded-xl border border-[#EBE5DD] bg-[#FAF7F2] text-center">
+                    <p className="text-xs text-[#706B63] mb-1">Assessed Risk Level</p>
+                    <p className="text-xl font-bold text-[#23211E]">{result.risk_level}</p>
                   </div>
                 </div>
 
                 {/* Probability Distribution Gradient Bar */}
-                <div className="p-4 rounded-xl border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] space-y-2">
+                <div className="p-4 rounded-xl border border-[#EBE5DD] bg-[#FAF7F2] space-y-2">
                   <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-emerald-700 dark:text-emerald-400">Normal Retina (NO DR): {((result.probability_no_dr ?? (1 - result.confidence)) * 100).toFixed(1)}%</span>
-                    <span className="text-rose-600 dark:text-rose-400">Diabetic Retinopathy (DR): {((result.probability_dr ?? result.confidence) * 100).toFixed(1)}%</span>
+                    <span className="text-emerald-700">Normal Retina (NO DR): {((result.probability_no_dr ?? (1 - result.confidence)) * 100).toFixed(1)}%</span>
+                    <span className="text-rose-600">Diabetic Retinopathy (DR): {((result.probability_dr ?? result.confidence) * 100).toFixed(1)}%</span>
                   </div>
-                  <div className="h-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex">
+                  <div className="h-3 w-full bg-slate-200 rounded-full overflow-hidden flex">
                     <div 
                       className="bg-emerald-500 h-full transition-all duration-500" 
                       style={{ width: `${((result.probability_no_dr ?? (1 - result.confidence)) * 100)}%` }}
@@ -386,13 +304,13 @@ const WorkerDashboard = () => {
                 </div>
 
                 {/* Retinal Fundus vs Grad-CAM Gradient Visualizer */}
-                <div className="border border-[#E6E1D7] dark:border-[#262B34] rounded-xl p-5 bg-[#F8F6F0] dark:bg-[#0D0F12] space-y-4">
+                <div className="border border-[#EBE5DD] rounded-xl p-5 bg-[#FAF7F2] space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
-                      <h3 className="text-sm font-bold text-[#1A1917] dark:text-[#F3F4F6]">Grad-CAM Attention Gradient Overlay</h3>
-                      <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF]">Neural network feature activation map highlighting suspicious retinal lesions</p>
+                      <h3 className="text-sm font-bold text-[#23211E]">Grad-CAM Attention Gradient Overlay</h3>
+                      <p className="text-xs text-[#706B63]">Neural network feature activation map highlighting suspicious retinal lesions</p>
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-[#6E6A63] dark:text-[#9CA3AF]">
+                    <div className="flex items-center gap-3 text-xs text-[#706B63]">
                       <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Normal</span>
                       <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-yellow-400 inline-block"></span> Moderate</span>
                       <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-600 inline-block"></span> High Focus</span>
@@ -402,8 +320,8 @@ const WorkerDashboard = () => {
                   <div className="grid md:grid-cols-2 gap-6 items-center">
                     {result.image_url ? (
                       <div className="space-y-2 text-center">
-                        <p className="text-xs font-bold text-[#6E6A63] dark:text-[#9CA3AF]">Original Retinal Scan</p>
-                        <div className="overflow-hidden rounded-xl border border-[#E6E1D7] dark:border-[#262B34] bg-black aspect-square max-w-xs mx-auto shadow-sm">
+                        <p className="text-xs font-bold text-[#706B63]">Original Retinal Scan</p>
+                        <div className="overflow-hidden rounded-xl border border-[#EBE5DD] bg-black aspect-square max-w-xs mx-auto shadow-sm">
                           <img src={result.image_url} alt="Original Retinal Scan" className="w-full h-full object-cover" />
                         </div>
                       </div>
@@ -417,7 +335,7 @@ const WorkerDashboard = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="p-8 text-center text-xs text-[#6E6A63] dark:text-[#9CA3AF] border border-dashed border-[#E6E1D7] dark:border-[#262B34] rounded-xl">
+                      <div className="p-8 text-center text-xs text-[#706B63] border border-dashed border-[#EBE5DD] rounded-xl">
                         Gradient heatmap overlay generated.
                       </div>
                     )}
@@ -426,31 +344,31 @@ const WorkerDashboard = () => {
 
                 {/* AI Written Clinical Context (Grok LLM Model Integration) */}
                 {result.ai_context && (
-                  <div className="border border-[#C85A32]/30 rounded-xl p-5 bg-[#F8F6F0] dark:bg-[#0D0F12] space-y-2">
+                  <div className="border border-[#C85A32]/30 rounded-xl p-5 bg-[#FAF7F2] space-y-2">
                     <div className="flex items-center gap-2 text-[#C85A32]">
                       <Sparkles className="w-4 h-4" />
                       <h3 className="text-xs font-extrabold uppercase tracking-wider">AI Written Context (Grok Clinical Model)</h3>
                     </div>
-                    <p className="text-xs text-[#1A1917] dark:text-[#F3F4F6] leading-relaxed font-medium">
+                    <p className="text-xs text-[#23211E] leading-relaxed font-medium">
                       {result.ai_context}
                     </p>
                   </div>
                 )}
 
-                <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl p-4 flex items-start gap-2 text-xs text-rose-800 dark:text-rose-300">
+                <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex items-start gap-2 text-xs text-rose-800">
                   <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" /> {result.recommendation}
                 </div>
 
                 <div className="flex items-center gap-4">
                   {reportStatus !== 'done' ? (
                     <button onClick={handleGenerateAndPublish} disabled={reportStatus === 'generating'}
-                      className="flex items-center gap-2 bg-[#1E1E1E] dark:bg-[#C85A32] hover:bg-[#333333] dark:hover:bg-[#B34E2B] disabled:opacity-40 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm">
+                      className="flex items-center gap-2 bg-[#1E1E1E] hover:bg-[#333333] disabled:opacity-40 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm">
                       <FileText className="w-4 h-4" />
                       {reportStatus === 'generating' ? 'Generating Report…' : 'Publish Report & Notify Patient'}
                     </button>
                   ) : (
-                    <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-xs">
-                      <CheckCircle className="w-5 h-5 tick-anim-box text-emerald-600 dark:text-emerald-400" /> Report published and delivered to patient portal & email.
+                    <div className="flex items-center gap-2 text-emerald-700 font-bold text-xs">
+                      <CheckCircle className="w-5 h-5 tick-anim-box text-emerald-600" /> Report published and delivered to patient portal & email.
                     </div>
                   )}
                 </div>
@@ -461,54 +379,38 @@ const WorkerDashboard = () => {
 
         {/* === PATIENTS LIST TAB === */}
         {tab === 'patients' && (
-          <div className="rounded-2xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-[#E6E1D7] dark:border-[#262B34] flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-extrabold flex items-center gap-2 text-[#1A1917] dark:text-[#F3F4F6]"><Users className="w-5 h-5 text-[#C85A32]" /> Patient Directory</h2>
-                <p className="text-xs text-[#6E6A63] dark:text-[#9CA3AF] mt-1">Manage clinical patient profiles & export records to Excel (.xlsx)</p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <input
-                  type="text"
-                  placeholder="Search by name, ID, or email..."
-                  value={patientSearch}
-                  onChange={(e) => setPatientSearch(e.target.value)}
-                  className="px-3.5 py-2 rounded-xl text-xs border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] outline-none focus:border-[#C85A32] w-60"
-                />
-
-                <button onClick={handleExportExcel} className="flex items-center gap-2 bg-[#2E7D32] hover:bg-[#256628] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition cursor-pointer">
-                  <Download className="w-4 h-4 text-white" /> Export Excel (.xlsx)
+          <div className="rounded-2xl border border-[#EBE5DD] bg-white shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-[#EBE5DD] flex justify-between items-center">
+              <h2 className="text-xl font-extrabold flex items-center gap-2 text-[#23211E]"><Users className="w-5 h-5 text-[#C85A32]" /> Patient Directory</h2>
+              <div className="flex gap-2">
+                <button onClick={handleExportExcel} className="flex items-center gap-2 bg-[#1E1E1E] hover:bg-[#333333] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
+                  <Download className="w-4 h-4 text-emerald-400" /> Export Excel (.xlsx)
                 </button>
-
-                <button onClick={() => setTab('new-patient')} className="flex items-center gap-2 bg-[#C85A32] hover:bg-[#B34E2B] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm cursor-pointer">
+                <button onClick={() => setTab('new-patient')} className="flex items-center gap-2 bg-[#C85A32] hover:bg-[#B34E2B] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm">
                   <UserPlus className="w-4 h-4" /> Add Patient
                 </button>
               </div>
             </div>
-
-            <table className="min-w-full divide-y divide-[#E6E1D7] dark:divide-[#262B34]">
-              <thead className="bg-[#F0ECDF] dark:bg-[#20242D]">
+            <table className="min-w-full divide-y divide-[#EBE5DD]">
+              <thead className="bg-[#F5F0E8]">
                 <tr>
                   {['Patient ID', 'Full Name', 'Username', 'Email', 'Actions'].map(h => (
-                    <th key={h} className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[#6E6A63] dark:text-[#9CA3AF]">{h}</th>
+                    <th key={h} className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[#706B63]">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E6E1D7] dark:divide-[#262B34]">
-                {filteredPatients.length === 0 && (
-                  <tr><td colSpan={5} className="px-6 py-8 text-center text-[#6E6A63] dark:text-[#9CA3AF] text-sm">No matching patient records found.</td></tr>
-                )}
-                {filteredPatients.map(p => (
-                  <tr key={p.id} className="cursor-pointer transition hover:bg-[#F8F6F0] dark:hover:bg-[#20242D]" onClick={() => { setSelectedPatientId(String(p.id)); setTab('screen'); }}>
-                    <td className="px-6 py-4 text-sm font-mono text-[#6E6A63] dark:text-[#9CA3AF]">{p.patient_access_id}</td>
-                    <td className="px-6 py-4 text-sm font-extrabold text-[#1A1917] dark:text-[#F3F4F6]">{p.name}</td>
-                    <td className="px-6 py-4 text-sm text-[#6E6A63] dark:text-[#9CA3AF]">{p.username}</td>
-                    <td className="px-6 py-4 text-sm text-[#6E6A63] dark:text-[#9CA3AF]">{p.email || '—'}</td>
+              <tbody className="divide-y divide-[#EBE5DD]">
+                {patients.length === 0 && <tr><td colSpan={5} className="px-6 py-8 text-center text-[#706B63] text-sm">No registered patient records found.</td></tr>}
+                {patients.map(p => (
+                  <tr key={p.id} className="cursor-pointer transition hover:bg-[#FAF7F2]" onClick={() => { setSelectedPatientId(String(p.id)); setTab('screen'); }}>
+                    <td className="px-6 py-4 text-sm font-mono text-[#706B63]">{p.patient_access_id}</td>
+                    <td className="px-6 py-4 text-sm font-extrabold text-[#23211E]">{p.name}</td>
+                    <td className="px-6 py-4 text-sm text-[#706B63]">{p.username}</td>
+                    <td className="px-6 py-4 text-sm text-[#706B63]">{p.email || '—'}</td>
                     <td className="px-6 py-4 text-sm">
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDeletePatient(p.id, p.name); }}
-                        className="text-rose-600 hover:text-rose-800 dark:text-rose-400 p-2 rounded-lg transition"
+                        className="text-rose-600 hover:text-rose-800 p-2 rounded-lg transition"
                         title="Delete Patient Record"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -523,17 +425,17 @@ const WorkerDashboard = () => {
 
         {/* === NEW PATIENT TAB === */}
         {tab === 'new-patient' && (
-          <div className="p-6 rounded-2xl border border-[#E6E1D7] dark:border-[#262B34] bg-white dark:bg-[#16191E] shadow-sm max-w-lg mx-auto">
-            <h2 className="text-xl font-extrabold mb-6 flex items-center gap-2 text-[#1A1917] dark:text-[#F3F4F6]"><UserPlus className="w-5 h-5 text-[#C85A32]" /> Register Patient Profile</h2>
+          <div className="p-6 rounded-2xl border border-[#EBE5DD] bg-white shadow-sm max-w-lg mx-auto">
+            <h2 className="text-xl font-extrabold mb-6 flex items-center gap-2 text-[#23211E]"><UserPlus className="w-5 h-5 text-[#C85A32]" /> Register Patient Profile</h2>
 
             {createdPatient ? (
-              <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-6 text-center space-y-3">
-                <CheckCircle className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto tick-anim-box" />
-                <p className="font-extrabold text-emerald-800 dark:text-emerald-300 text-lg">Patient account created successfully</p>
-                <div className="text-xs space-y-1 font-mono rounded-xl p-4 text-left border bg-white dark:bg-[#0D0F12] border-emerald-200 dark:border-emerald-800 text-[#1A1917] dark:text-[#F3F4F6]">
-                  <p><span className="font-semibold text-[#6E6A63] dark:text-[#9CA3AF]">Patient ID:</span> {createdPatient.patient_access_id}</p>
-                  <p><span className="font-semibold text-[#6E6A63] dark:text-[#9CA3AF]">Username:</span> {createdPatient.username}</p>
-                  <p><span className="font-semibold text-[#6E6A63] dark:text-[#9CA3AF]">Email:</span> {createdPatient.email}</p>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center space-y-3">
+                <CheckCircle className="w-10 h-10 text-emerald-600 mx-auto tick-anim-box" />
+                <p className="font-extrabold text-emerald-800 text-lg">Patient account created successfully</p>
+                <div className="text-xs space-y-1 font-mono rounded-xl p-4 text-left border bg-white border-emerald-200 text-[#23211E]">
+                  <p><span className="font-semibold text-[#706B63]">Patient ID:</span> {createdPatient.patient_access_id}</p>
+                  <p><span className="font-semibold text-[#706B63]">Username:</span> {createdPatient.username}</p>
+                  <p><span className="font-semibold text-[#706B63]">Email:</span> {createdPatient.email}</p>
                   {createdPatient.set_password_link && (
                     <p className="pt-2 text-xs font-sans break-all">
                       <span className="font-bold">Activation Link:</span>{' '}
@@ -552,25 +454,25 @@ const WorkerDashboard = () => {
               <form onSubmit={handleCreatePatient} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold mb-1 text-[#6E6A63] dark:text-[#9CA3AF]">First Name</label>
+                    <label className="block text-xs font-semibold mb-1 text-[#706B63]">First Name</label>
                     <input value={newPatient.first_name} onChange={e => setNewPatient({ ...newPatient, first_name: e.target.value })}
-                      className="w-full border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" required />
+                      className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" required />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold mb-1 text-[#6E6A63] dark:text-[#9CA3AF]">Last Name</label>
+                    <label className="block text-xs font-semibold mb-1 text-[#706B63]">Last Name</label>
                     <input value={newPatient.last_name} onChange={e => setNewPatient({ ...newPatient, last_name: e.target.value })}
-                      className="w-full border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" required />
+                      className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" required />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#6E6A63] dark:text-[#9CA3AF]">Email Address <span className="text-rose-600">*</span></label>
+                  <label className="block text-xs font-semibold mb-1 text-[#706B63]">Email Address <span className="text-rose-600">*</span></label>
                   <input type="email" value={newPatient.email} onChange={e => setNewPatient({ ...newPatient, email: e.target.value })}
-                    className="w-full border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" required />
+                    className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" required />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#6E6A63] dark:text-[#9CA3AF]">Phone Number (Optional)</label>
+                  <label className="block text-xs font-semibold mb-1 text-[#706B63]">Phone Number (Optional)</label>
                   <input type="tel" value={newPatient.phone} onChange={e => setNewPatient({ ...newPatient, phone: e.target.value })}
-                    className="w-full border border-[#E6E1D7] dark:border-[#262B34] bg-[#F8F6F0] dark:bg-[#0D0F12] text-[#1A1917] dark:text-[#F3F4F6] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" />
+                    className="w-full border border-[#EBE5DD] bg-[#FAF7F2] text-[#23211E] rounded-xl p-2.5 text-xs outline-none focus:border-[#C85A32]" />
                 </div>
                 <button type="submit" className="w-full bg-[#C85A32] hover:bg-[#B34E2B] text-white py-3 rounded-xl font-bold text-xs shadow-sm transition">
                   Create Patient & Send Activation Email
@@ -581,11 +483,9 @@ const WorkerDashboard = () => {
         )}
       </main>
     </div>
-  </div>
-);
+  );
 };
 
 export default WorkerDashboard;
-
 
 
