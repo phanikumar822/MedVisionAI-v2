@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Eye, ShieldCheck, UserCheck, Sparkles } from 'lucide-react';
+import { Eye, ShieldCheck, UserCheck, Sparkles, Fingerprint } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
@@ -57,12 +57,12 @@ const Login = () => {
         <div className="signin">
           <div className="content">
             
-            {/* Header Brand */}
+            {/* Clean Single-Line Header Brand */}
             <div className="brand-header">
               <div className="brand-logo-box">
                 <Eye className="w-5 h-5 text-white" />
               </div>
-              <span className="brand-title">MedVision<span>AI</span></span>
+              <span className="brand-title">MedVisionAI</span>
             </div>
 
             {/* Portal Segment Toggle Pill */}
@@ -88,6 +88,7 @@ const Login = () => {
             {error && <div className="auth-error-banner">{error}</div>}
 
             <form onSubmit={handleSubmit} className="form">
+              {/* Username Input Box with Laser Fingerprint Scanner */}
               <div className="inputBox">
                 <input
                   type="text"
@@ -96,8 +97,13 @@ const Login = () => {
                   onChange={(e) => setUsername(e.target.value)}
                 />
                 <i>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</i>
+                <div className="fingerprint-scanner-box" title="Biometric Security Scan">
+                  <Fingerprint className="scanner-icon" />
+                  <div className="laser-scan-line"></div>
+                </div>
               </div>
 
+              {/* Password Input Box with Laser Fingerprint Scanner */}
               <div className="inputBox">
                 <input
                   type="password"
@@ -106,6 +112,10 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <i>Password</i>
+                <div className="fingerprint-scanner-box" title="Biometric Security Scan">
+                  <Fingerprint className="scanner-icon" />
+                  <div className="laser-scan-line"></div>
+                </div>
               </div>
 
               <div className="inputBox">
