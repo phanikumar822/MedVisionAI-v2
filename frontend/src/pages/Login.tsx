@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
+import { Eye, ShieldCheck, UserCheck, Sparkles } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
@@ -11,7 +11,6 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -41,105 +40,85 @@ const Login = () => {
         navigate('/worker');
       }
     } catch (err: any) {
-      setError(err.response?.data?.detail || err.message || 'Invalid username or password. Please try again.');
+      setError(err.response?.data?.detail || err.message || 'Invalid username or password.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="animated-auth-root">
-      
-      {/* Background Interactive Grid Spans */}
-      <section className="grid-section">
-        {Array.from({ length: 80 }).map((_, i) => (
-          <span key={i}></span>
+    <div className="auth-page-wrapper">
+      <section className="grid-bg-section">
+        {/* Render 180 interactive background grid tiles */}
+        {Array.from({ length: 180 }).map((_, i) => (
+          <span key={i} />
         ))}
 
-        {/* Central Signin Glass Card - NO SHOWCASE IMAGES */}
         <div className="signin">
           <div className="content">
             
-            {/* Brand Header */}
+            {/* Header Brand */}
             <div className="brand-header">
               <div className="brand-logo-box">
                 <Eye className="w-5 h-5 text-white" />
               </div>
-              <h1 className="brand-title">MedVision<span className="text-teal font-extrabold">AI</span></h1>
+              <span className="brand-title">MedVision<span>AI</span></span>
             </div>
 
-            {/* Mode Switcher Tabs */}
-            <div className="portal-switcher">
+            {/* Portal Segment Toggle Pill */}
+            <div className="portal-toggle-pill">
               <button
                 type="button"
-                className={`switch-tab ${mode === 'doctor' ? 'active-tab' : ''}`}
+                className={`toggle-btn ${mode === 'doctor' ? 'active' : ''}`}
                 onClick={() => { setMode('doctor'); setError(''); }}
               >
-                <ShieldCheck className="w-4 h-4" /> Doctor Portal
+                <ShieldCheck className="w-4 h-4" /> DOCTOR PORTAL
               </button>
               <button
                 type="button"
-                className={`switch-tab ${mode === 'patient' ? 'active-tab' : ''}`}
+                className={`toggle-btn ${mode === 'patient' ? 'active' : ''}`}
                 onClick={() => { setMode('patient'); setError(''); }}
               >
-                <UserCheck className="w-4 h-4" /> Patient Portal
+                <UserCheck className="w-4 h-4" /> PATIENT PORTAL
               </button>
             </div>
 
-            {/* Title */}
-            <h2 key={`title-${mode}`} className="form-heading">
-              {mode === 'doctor' ? 'Clinician Sign In' : 'Patient Sign In'}
-            </h2>
+            <h2>{mode === 'doctor' ? 'Clinician Sign In' : 'Patient Sign In'}</h2>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="auth-form-body" key={`form-${mode}`}>
-              
-              {error && <div className="error-msg">{error}</div>}
+            {error && <div className="auth-error-banner">{error}</div>}
 
-              {/* Username Input Box */}
+            <form onSubmit={handleSubmit} className="form">
               <div className="inputBox">
                 <input
                   type="text"
+                  required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  required
                 />
-                <i>
-                  <User className="inline-icon" /> {mode === 'doctor' ? 'Doctor Username' : 'Patient Username'}
-                </i>
+                <i>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</i>
               </div>
 
-              {/* Password Input Box */}
               <div className="inputBox">
                 <input
                   type="password"
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
                 />
-                <i>
-                  <Lock className="inline-icon" /> Password
-                </i>
+                <i>Password</i>
               </div>
 
-              {/* Action Submit Button */}
-              <button type="submit" className="login-submit-btn" disabled={loading}>
-                <Sparkles className="w-4 h-4" />
-                <span>{loading ? 'AUTHENTICATING...' : `SIGN IN TO ${mode === 'doctor' ? 'DOCTOR' : 'PATIENT'} PORTAL`}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="inputBox">
+                <button type="submit" className="submit-btn" disabled={loading}>
+                  <Sparkles className="w-4 h-4" />
+                  {loading ? 'Authenticating...' : `Sign In to ${mode === 'doctor' ? 'Doctor Portal' : 'Patient Portal'}`}
+                </button>
+              </div>
             </form>
-
-            <p className="portal-hint">
-              {mode === 'doctor'
-                ? 'Access DR screening diagnostics, Grad-CAM overlays & report publishing.'
-                : 'View your screening results, download PDF reports & consult AI assistant.'}
-            </p>
 
           </div>
         </div>
       </section>
-
     </div>
   );
 };

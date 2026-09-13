@@ -1,25 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-* {
+.auth-page-wrapper {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-.animated-auth-root {
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  width: 100vw;
-  background: #0A0F1D;
+  background: #0F172A;
   overflow: hidden;
-  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-  color: #FFFFFF;
 }
 
-/* Background Animated Grid */
-.grid-section {
+.grid-bg-section {
   position: absolute;
   width: 100vw;
   height: 100vh;
@@ -31,290 +26,264 @@
   overflow: hidden;
 }
 
-.grid-section::before {
+.grid-bg-section::before {
   content: '';
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, #0A0F1D 0%, #0F766E 50%, #0A0F1D 100%);
-  animation: gridAnimate 8s ease-in-out infinite alternate;
-  opacity: 0.35;
+  background: linear-gradient(#0F172A, #0F766E, #0D9488, #0F172A);
+  animation: animateGrid 6s linear infinite;
 }
 
-@keyframes gridAnimate {
+@keyframes animateGrid {
   0% {
-    transform: translateY(-50%);
+    transform: translateY(-100%);
   }
   100% {
-    transform: translateY(50%);
+    transform: translateY(100%);
   }
 }
 
-/* Interactive Grid Cells */
-.grid-section span {
+.grid-bg-section span {
   position: relative;
   display: block;
   width: calc(6.25vw - 2px);
   height: calc(6.25vw - 2px);
-  background: #0F172A;
+  background: #1E293B;
   z-index: 2;
-  transition: background 1.2s ease;
+  transition: 1.5s;
 }
 
-.grid-section span:hover {
-  background: #0F766E;
-  transition: background 0s ease;
-  box-shadow: 0 0 12px rgba(20, 184, 166, 0.4);
+.grid-bg-section span:hover {
+  background: linear-gradient(135deg, #0F766E, #14B8A6);
+  transition: 0s;
 }
 
-/* Central Glassmorphism Signin Box */
-.grid-section .signin {
+.grid-bg-section .signin {
   position: absolute;
-  width: 430px;
-  max-width: 92vw;
-  background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  z-index: 100;
+  width: 440px;
+  min-height: 520px;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(16px);
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 36px 32px;
-  border-radius: 18px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6),
-              0 0 30px rgba(15, 118, 110, 0.25);
-  border: 1px solid rgba(20, 184, 166, 0.3);
+  padding: 40px 36px;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5),
+              0 0 50px rgba(15, 118, 110, 0.25);
+  border: 1px solid rgba(20, 184, 166, 0.35);
+  animation: cardFadeIn 0.5s ease-out;
 }
 
-.grid-section .signin .content {
+@keyframes cardFadeIn {
+  0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.grid-bg-section .signin .content {
   position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 /* Brand Header */
 .brand-header {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
-  width: 100%;
+  margin-bottom: 2px;
 }
 
 .brand-logo-box {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   background: #0F766E;
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.4);
+  box-shadow: 0 0 15px rgba(20, 184, 166, 0.4);
 }
 
 .brand-title {
-  font-size: 1.45rem;
+  font-size: 1.3em;
   font-weight: 800;
+  letter-spacing: -0.4px;
   color: #FFFFFF;
-  letter-spacing: -0.5px;
-  white-space: nowrap;
 }
 
-.brand-title .text-teal {
+.brand-title span {
   color: #14B8A6;
-  font-weight: 800;
 }
 
-/* Portal Switcher Tabs */
-.portal-switcher {
+/* Portal Role Switcher Pill */
+.portal-toggle-pill {
   display: flex;
-  background: rgba(30, 41, 59, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1E293B;
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  border-radius: 12px;
   padding: 4px;
-  border-radius: 10px;
   width: 100%;
-  gap: 4px;
 }
 
-.switch-tab {
+.toggle-btn {
   flex: 1;
-  padding: 9px 12px;
+  padding: 8px 12px;
   background: transparent;
   border: none;
   color: #94A3B8;
-  font-size: 0.78rem;
   font-weight: 700;
-  border-radius: 7px;
+  font-size: 0.76em;
+  letter-spacing: 0.5px;
   cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transition: all 0.25s ease;
 }
 
-.switch-tab.active-tab {
+.toggle-btn.active {
   background: #0F766E;
   color: #FFFFFF;
   box-shadow: 0 2px 8px rgba(15, 118, 110, 0.4);
 }
 
-/* Heading */
-.form-heading {
-  font-size: 1.35rem;
-  color: #14B8A6;
+.grid-bg-section .signin .content h2 {
+  font-size: 1.5em;
+  background: linear-gradient(135deg, #14B8A6, #2DD4BF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-transform: uppercase;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  margin-top: 4px;
-  text-align: center;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 2px 0 4px 0;
 }
 
-/* Error Banner */
-.error-msg {
+.auth-error-banner {
+  width: 100%;
   background: rgba(225, 29, 72, 0.15);
   border: 1px solid rgba(225, 29, 72, 0.4);
   color: #FECDD3;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 8px;
-  font-size: 0.8rem;
+  font-size: 0.82em;
   font-weight: 600;
   text-align: center;
-  width: 100%;
 }
 
-/* Auth Form Body */
-.auth-form-body {
+.grid-bg-section .signin .content .form {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
-.inputBox {
+.grid-bg-section .signin .content .form .inputBox {
   position: relative;
   width: 100%;
 }
 
-.inputBox input {
+.grid-bg-section .signin .content .form .inputBox input {
+  position: relative;
   width: 100%;
   background: #1E293B;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
   outline: none;
-  padding: 22px 14px 8px;
-  border-radius: 10px;
+  padding: 22px 15px 8px;
+  border-radius: 12px;
   color: #FFFFFF;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.95em;
   transition: all 0.3s ease;
-  font-family: inherit;
 }
 
-.inputBox input:focus {
+.grid-bg-section .signin .content .form .inputBox input:focus {
   border: 2px solid #14B8A6;
   background: #0F172A;
-  box-shadow: 0 0 12px rgba(20, 184, 166, 0.25);
+  box-shadow: 0 0 15px rgba(20, 184, 166, 0.2);
 }
 
-.inputBox i {
+.grid-bg-section .signin .content .form .inputBox i {
   position: absolute;
-  left: 14px;
+  left: 15px;
   top: 50%;
   transform: translateY(-50%);
   font-style: normal;
   color: #94A3B8;
   transition: all 0.3s ease;
   pointer-events: none;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 0.9em;
 }
 
-.inline-icon {
-  width: 14px;
-  height: 14px;
-  color: #94A3B8;
-}
-
-/* Floating Labels */
-.inputBox input:focus ~ i,
-.inputBox input:valid ~ i {
-  top: 11px;
+.signin .content .form .inputBox input:focus ~ i,
+.signin .content .form .inputBox input:valid ~ i {
+  top: 12px;
   transform: translateY(0);
-  font-size: 0.72rem;
+  font-size: 0.72em;
   color: #14B8A6;
   font-weight: 700;
 }
 
-.inputBox input:focus ~ i .inline-icon,
-.inputBox input:valid ~ i .inline-icon {
-  color: #14B8A6;
-}
-
-/* Submit Button */
-.login-submit-btn {
+.submit-btn {
   width: 100%;
-  padding: 14px 20px;
-  background: linear-gradient(135deg, #0F766E 0%, #0D9488 50%, #14B8A6 100%);
+  padding: 14px;
+  background: linear-gradient(135deg, #0F766E, #0D9488);
   color: #FFFFFF;
-  font-weight: 800;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.95em;
   letter-spacing: 0.5px;
   cursor: pointer;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
+  margin-top: 5px;
+  text-transform: uppercase;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.35);
+  box-shadow: 0 10px 25px rgba(15, 118, 110, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 6px;
 }
 
-.login-submit-btn:hover:not(:disabled) {
+.submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(20, 184, 166, 0.45);
+  background: linear-gradient(135deg, #0D9488, #14B8A6);
+  box-shadow: 0 15px 35px rgba(20, 184, 166, 0.45);
 }
 
-.login-submit-btn:active:not(:disabled) {
+.submit-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
-.login-submit-btn:disabled {
+.submit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.portal-hint {
-  font-size: 0.75rem;
-  color: #94A3B8;
-  text-align: center;
-  line-height: 1.4;
-  margin-top: 2px;
-}
-
 @media (max-width: 900px) {
-  .grid-section span {
+  .grid-bg-section span {
     width: calc(10vw - 2px);
     height: calc(10vw - 2px);
   }
 }
 
 @media (max-width: 600px) {
-  .grid-section span {
+  .grid-bg-section span {
     width: calc(20vw - 2px);
     height: calc(20vw - 2px);
   }
   
-  .grid-section .signin {
+  .grid-bg-section .signin {
     width: 92%;
-    padding: 30px 22px;
+    padding: 32px 24px;
   }
 }
