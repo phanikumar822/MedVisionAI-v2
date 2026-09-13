@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
+import { Eye, ShieldCheck, UserCheck, Lock, User, ArrowRight, Sparkles, CheckCircle2, Activity, MessageSquare } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
@@ -48,99 +48,169 @@ const Login = () => {
   };
 
   return (
-    <div className="animated-auth-root">
+    <div className="login-root-container">
       
-      {/* Interactive Grid Background */}
-      <section className="grid-section">
-        {Array.from({ length: 90 }).map((_, i) => (
-          <span key={i}></span>
-        ))}
+      {/* Background Ambient Glows & Grid Pattern */}
+      <div className="bg-glow-orb orb-1"></div>
+      <div className="bg-glow-orb orb-2"></div>
+      <div className="bg-grid-overlay"></div>
 
-        {/* Central Animated Signin Card */}
-        <div className="signin">
-          <div className="content">
-            
-            {/* Header Brand */}
-            <div className="brand-header">
-              <div className="brand-logo-box">
-                <Eye className="w-5 h-5 text-white" />
-              </div>
-              <h1 className="brand-title">MedVision<span>AI</span></h1>
+      {/* Main Glassmorphism Portal Shell */}
+      <div className="portal-shell">
+        
+        {/* LEFT COLUMN: AUTH FORM */}
+        <div className="form-column">
+          
+          {/* Brand Header */}
+          <div className="brand-header-wrap">
+            <div className="brand-icon-box">
+              <Eye className="w-5 h-5 text-white" />
             </div>
+            <span className="brand-logo-text">
+              MedVision<span className="text-teal-400">AI</span>
+            </span>
+          </div>
 
-            {/* Portal Switcher Tabs */}
-            <div className="portal-switcher">
-              <button
-                type="button"
-                className={`switch-tab ${mode === 'doctor' ? 'active-tab' : ''}`}
-                onClick={() => { setMode('doctor'); setError(''); }}
-              >
-                <ShieldCheck className="w-4 h-4" /> Doctor Portal
-              </button>
-              <button
-                type="button"
-                className={`switch-tab ${mode === 'patient' ? 'active-tab' : ''}`}
-                onClick={() => { setMode('patient'); setError(''); }}
-              >
-                <UserCheck className="w-4 h-4" /> Patient Portal
-              </button>
-            </div>
+          {/* Mode Switcher Pill */}
+          <div className="mode-switcher-pill">
+            <div className={`mode-glider ${mode === 'patient' ? 'slide-patient' : ''}`}></div>
+            <button
+              type="button"
+              className={`switcher-tab ${mode === 'doctor' ? 'tab-active' : ''}`}
+              onClick={() => { setMode('doctor'); setError(''); }}
+            >
+              <ShieldCheck className="w-4 h-4" /> DOCTOR PORTAL
+            </button>
+            <button
+              type="button"
+              className={`switcher-tab ${mode === 'patient' ? 'tab-active' : ''}`}
+              onClick={() => { setMode('patient'); setError(''); }}
+            >
+              <UserCheck className="w-4 h-4" /> PATIENT PORTAL
+            </button>
+          </div>
 
-            {/* Title */}
-            <h2 key={`title-${mode}`} className="form-heading">
+          {/* Form Header */}
+          <div className="form-title-group" key={`title-${mode}`}>
+            <h1 className="main-form-title">
               {mode === 'doctor' ? 'Clinician Sign In' : 'Patient Sign In'}
-            </h2>
+            </h1>
+            <p className="main-form-subtext">
+              {mode === 'doctor' 
+                ? 'Access AI retinal fundus screening workspace & Grad-CAM heatmap diagnostics.'
+                : 'Sign in to view diagnostic findings, download PDF reports, & consult AI assistant.'}
+            </p>
+          </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="form" key={`form-${mode}`}>
+          {/* Error Banner */}
+          {error && <div className="form-error-banner">{error}</div>}
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="portal-auth-form" key={`form-${mode}`}>
+            
+            <div className="input-group-row">
               
-              {error && <div className="error-msg">{error}</div>}
-
-              {/* Username Input Box */}
-              <div className="inputBox">
+              {/* Username Input */}
+              <div className="floating-field-wrap">
+                <div className="input-icon-left">
+                  <User className="w-4 h-4 text-[#94A3B8]" />
+                </div>
                 <input
                   type="text"
+                  className="floating-input"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  placeholder=" "
                   required
                 />
-                <i>
-                  <User className="inline-icon" /> {mode === 'doctor' ? 'Doctor Username' : 'Patient Username'}
-                </i>
+                <label className="floating-label">
+                  {mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}
+                </label>
               </div>
 
-              {/* Password Input Box */}
-              <div className="inputBox">
+              {/* Password Input */}
+              <div className="floating-field-wrap">
+                <div className="input-icon-left">
+                  <Lock className="w-4 h-4 text-[#94A3B8]" />
+                </div>
                 <input
                   type="password"
+                  className="floating-input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder=" "
                   required
                 />
-                <i>
-                  <Lock className="inline-icon" /> Password
-                </i>
+                <label className="floating-label">Password</label>
               </div>
 
-              {/* Action Submit Button */}
-              <div className="inputBox submitBox">
-                <button type="submit" className="login-submit-btn" disabled={loading}>
-                  <Sparkles className="w-4 h-4" />
-                  <span>{loading ? 'AUTHENTICATING...' : `SIGN IN TO ${mode === 'doctor' ? 'DOCTOR' : 'PATIENT'} PORTAL`}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </form>
+            </div>
 
-            <p className="portal-hint">
-              {mode === 'doctor'
-                ? 'Access DR screening diagnostics, Grad-CAM overlays & report publishing.'
-                : 'View your screening results, download PDF reports & consult AI assistant.'}
-            </p>
+            {/* Action Submit Button */}
+            <button type="submit" className="portal-submit-btn" disabled={loading}>
+              <Sparkles className="w-4 h-4 shrink-0" />
+              <span className="submit-btn-label">
+                {loading ? 'Authenticating...' : `Sign In to ${mode === 'doctor' ? 'Doctor Portal' : 'Patient Portal'}`}
+              </span>
+              <ArrowRight className="w-4 h-4 shrink-0" />
+            </button>
+          </form>
+
+          {/* Clinical Feature Checklist */}
+          <div className="feature-checklist-box" key={`features-${mode}`}>
+            {mode === 'doctor' ? (
+              <>
+                <div className="checklist-item">
+                  <div className="check-badge warm"><CheckCircle2 className="w-3.5 h-3.5" /></div>
+                  <span>Retinal image analysis & EfficientNet-B0 inference</span>
+                </div>
+                <div className="checklist-item">
+                  <div className="check-badge warm"><CheckCircle2 className="w-3.5 h-3.5" /></div>
+                  <span>Grad-CAM lesion heatmaps & diagnostic logit scale</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="checklist-item">
+                  <div className="check-badge sage"><CheckCircle2 className="w-3.5 h-3.5" /></div>
+                  <span>View official screening findings & downloadable PDFs</span>
+                </div>
+                <div className="checklist-item">
+                  <div className="check-badge sage"><CheckCircle2 className="w-3.5 h-3.5" /></div>
+                  <span>Ask questions to RAG-grounded report assistant</span>
+                </div>
+              </>
+            )}
+          </div>
+
+        </div>
+
+        {/* RIGHT COLUMN: PORTAL SHOWCASE CARD */}
+        <div className="showcase-column">
+          <div className="showcase-card-inner" key={`img-${mode}`}>
+            
+            <img
+              src={mode === 'doctor' ? '/assets/doctor_portal_hero.jpg' : '/assets/patient_portal_hero.jpg'}
+              alt={mode === 'doctor' ? 'Doctor Workspace' : 'Patient Portal'}
+              className="showcase-img"
+            />
+            <div className="showcase-img-overlay"></div>
+
+            {/* Floating Info Badge */}
+            <div className="floating-showcase-badge">
+              <div className="badge-icon-bg">
+                {mode === 'doctor' ? <Activity className="w-4 h-4 text-teal-400" /> : <MessageSquare className="w-4 h-4 text-emerald-400" />}
+              </div>
+              <div className="badge-text-group">
+                <span className="badge-title font-extrabold">{mode === 'doctor' ? 'Clinical Workspace' : 'Patient Health Portal'}</span>
+                <span className="badge-sub font-semibold">{mode === 'doctor' ? 'Grad-CAM DR Heatmaps' : 'ChromaDB AI Assistant'}</span>
+              </div>
+            </div>
 
           </div>
         </div>
-      </section>
+
+      </div>
 
     </div>
   );
