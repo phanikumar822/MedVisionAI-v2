@@ -51,7 +51,7 @@ const Login = () => {
       <section className="grid-bg-section">
         {/* Render 180 interactive background grid tiles */}
         {Array.from({ length: 180 }).map((_, i) => (
-          <span key={i} />
+          <span key={i} className="bg-tile" />
         ))}
 
         <div className="signin">
@@ -62,7 +62,7 @@ const Login = () => {
               <div className="brand-logo-box">
                 <Eye className="w-5 h-5 text-white" />
               </div>
-              <span className="brand-title">MedVisionAI</span>
+              <div className="brand-title">MedVisionAI</div>
             </div>
 
             {/* Portal Segment Toggle Pill */}

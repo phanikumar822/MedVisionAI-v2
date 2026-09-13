@@ -44,7 +44,7 @@
   }
 }
 
-.grid-bg-section span {
+.grid-bg-section .bg-tile {
   position: relative;
   display: block;
   width: calc(6.25vw - 2px);
@@ -54,7 +54,7 @@
   transition: 1.5s;
 }
 
-.grid-bg-section span:hover {
+.grid-bg-section .bg-tile:hover {
   background: linear-gradient(135deg, #0F766E, #14B8A6);
   transition: 0s;
 }
@@ -115,12 +115,14 @@
 }
 
 .brand-title {
-  font-size: 1.4em;
+  font-size: 1.45em;
   font-weight: 800;
   letter-spacing: -0.4px;
   color: #FFFFFF;
   white-space: nowrap;
   line-height: 1;
+  margin: 0;
+  padding: 0;
 }
 
 /* Portal Role Switcher Pill */
@@ -327,14 +329,14 @@
 }
 
 @media (max-width: 900px) {
-  .grid-bg-section span {
+  .grid-bg-section .bg-tile {
     width: calc(10vw - 2px);
     height: calc(10vw - 2px);
   }
 }
 
 @media (max-width: 600px) {
-  .grid-bg-section span {
+  .grid-bg-section .bg-tile {
     width: calc(20vw - 2px);
     height: calc(20vw - 2px);
   }
