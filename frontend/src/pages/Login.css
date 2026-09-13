@@ -187,53 +187,65 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
-.grid-bg-section .signin .content .form .inputBox {
-  position: relative;
+.inputBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   width: 100%;
 }
 
-.grid-bg-section .signin .content .form .inputBox input {
+.field-label {
+  font-size: 0.8em;
+  font-weight: 600;
+  color: #CBD5E1;
+  letter-spacing: 0.2px;
+}
+
+.input-wrap {
   position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrap input {
   width: 100%;
   background: #1E293B;
-  border: 2px solid transparent;
+  border: 2px solid rgba(20, 184, 166, 0.25);
   outline: none;
-  padding: 22px 46px 8px 16px;
+  padding: 12px 46px 12px 16px;
   border-radius: 12px;
   color: #FFFFFF;
   font-weight: 500;
-  font-size: 0.95em;
-  transition: all 0.3s ease;
-}
-
-.grid-bg-section .signin .content .form .inputBox input:focus {
-  border: 2px solid #14B8A6;
-  background: #0F172A;
-  box-shadow: 0 0 15px rgba(20, 184, 166, 0.2);
-}
-
-.grid-bg-section .signin .content .form .inputBox i {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-style: normal;
-  color: #94A3B8;
-  transition: all 0.3s ease;
-  pointer-events: none;
   font-size: 0.9em;
+  transition: all 0.3s ease;
+  font-family: inherit;
 }
 
-.signin .content .form .inputBox input:focus ~ i,
-.signin .content .form .inputBox input:valid ~ i {
-  top: 12px;
-  transform: translateY(0);
-  font-size: 0.72em;
-  color: #14B8A6;
-  font-weight: 700;
+.input-wrap input::placeholder {
+  color: #64748B;
+  font-size: 0.88em;
+}
+
+.input-wrap input:focus {
+  border-color: #14B8A6;
+  background: #0F172A;
+  box-shadow: 0 0 15px rgba(20, 184, 166, 0.25);
+}
+
+/* Browser Autofill Override (Fixes white background bug on autofill) */
+.input-wrap input:-webkit-autofill,
+.input-wrap input:-webkit-autofill:hover,
+.input-wrap input:-webkit-autofill:focus,
+.input-wrap input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #1E293B inset !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  caret-color: #FFFFFF;
+  transition: background-color 5000s ease-in-out 0s;
+  border-color: rgba(20, 184, 166, 0.4) !important;
 }
 
 /* Moving Laser Fingerprint Scanner Box */
@@ -260,8 +272,8 @@
   transition: all 0.3s ease;
 }
 
-.inputBox input:focus ~ .fingerprint-scanner-box .scanner-icon,
-.inputBox input:valid ~ .fingerprint-scanner-box .scanner-icon {
+.input-wrap input:focus ~ .fingerprint-scanner-box .scanner-icon,
+.input-wrap input:valid ~ .fingerprint-scanner-box .scanner-icon {
   color: #2DD4BF;
   filter: drop-shadow(0 0 5px rgba(45, 212, 191, 0.8));
 }
@@ -292,6 +304,11 @@
   }
 }
 
+.submit-box {
+  margin-top: 4px;
+  width: 100%;
+}
+
 .submit-btn {
   width: 100%;
   padding: 14px;
@@ -303,7 +320,6 @@
   cursor: pointer;
   border: none;
   border-radius: 12px;
-  margin-top: 5px;
   text-transform: uppercase;
   transition: all 0.3s ease;
   box-shadow: 0 10px 25px rgba(15, 118, 110, 0.35);

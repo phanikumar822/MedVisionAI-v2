@@ -57,7 +57,7 @@ const Login = () => {
         <div className="signin">
           <div className="content">
             
-            {/* Clean Single-Line Header Brand */}
+            {/* Header Brand */}
             <div className="brand-header">
               <div className="brand-logo-box">
                 <Eye className="w-5 h-5 text-white" />
@@ -88,37 +88,43 @@ const Login = () => {
             {error && <div className="auth-error-banner">{error}</div>}
 
             <form onSubmit={handleSubmit} className="form">
-              {/* Username Input Box with Laser Fingerprint Scanner */}
+              {/* Username Input Box */}
               <div className="inputBox">
-                <input
-                  type="text"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-                <i>{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</i>
-                <div className="fingerprint-scanner-box" title="Biometric Security Scan">
-                  <Fingerprint className="scanner-icon" />
-                  <div className="laser-scan-line"></div>
+                <label className="field-label">{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</label>
+                <div className="input-wrap">
+                  <input
+                    type="text"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder={mode === 'doctor' ? 'e.g. worker1 or medvision.admin' : 'Enter patient username'}
+                  />
+                  <div className="fingerprint-scanner-box" title="Biometric Security Scan">
+                    <Fingerprint className="scanner-icon" />
+                    <div className="laser-scan-line"></div>
+                  </div>
                 </div>
               </div>
 
-              {/* Password Input Box with Laser Fingerprint Scanner */}
+              {/* Password Input Box */}
               <div className="inputBox">
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <i>Password</i>
-                <div className="fingerprint-scanner-box" title="Biometric Security Scan">
-                  <Fingerprint className="scanner-icon" />
-                  <div className="laser-scan-line"></div>
+                <label className="field-label">Password</label>
+                <div className="input-wrap">
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                  />
+                  <div className="fingerprint-scanner-box" title="Biometric Security Scan">
+                    <Fingerprint className="scanner-icon" />
+                    <div className="laser-scan-line"></div>
+                  </div>
                 </div>
               </div>
 
-              <div className="inputBox">
+              <div className="submit-box">
                 <button type="submit" className="submit-btn" disabled={loading}>
                   <Sparkles className="w-4 h-4" />
                   {loading ? 'Authenticating...' : `Sign In to ${mode === 'doctor' ? 'Doctor Portal' : 'Patient Portal'}`}
