@@ -4,111 +4,146 @@ import { ShieldCheck, Activity, Eye, FileText, Lock, Users, ArrowRight, CheckCir
 
 const Landing = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8F9FA] text-[#0F172A]">
+    <div className="min-h-screen flex flex-col bg-[#0B111E] text-slate-100 selection:bg-teal-500/30 selection:text-teal-200 font-sans">
       
-      {/* Navigation Header */}
-      <header className="bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-md bg-[#0F172A] flex items-center justify-center shadow-sm">
-              <Eye className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold tracking-tight text-[#0F172A]">
-              MedVision<span className="text-[#0F766E]">AI</span>
-            </span>
-          </div>
+      {/* Hero Wrapper with Photorealistic Clinic Background & Ambient Lighting */}
+      <div className="relative min-h-[88vh] lg:min-h-[94vh] flex flex-col bg-[url('/assets/clinic_hero_bg.jpg')] bg-cover bg-center bg-no-repeat overflow-hidden">
+        {/* Soft Clinical Vignette Overlay for Crisp Typography & Glass Contrast */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-slate-900/40 to-[#0B111E] pointer-events-none" />
+        <div className="absolute inset-0 bg-radial-[circle_at_50%_30%] from-transparent via-slate-950/20 to-slate-950/70 pointer-events-none" />
 
-          <div className="flex items-center space-x-4">
-            <Link to="/login" className="text-xs font-semibold text-[#475569] hover:text-[#0F172A] transition">
-              Clinical Sign In
-            </Link>
-            <Link to="/login" className="bg-[#0F766E] hover:bg-[#0D9488] text-white px-4 py-2 rounded-md text-xs font-semibold transition shadow-sm flex items-center gap-1.5">
-              <span>Open Workspace</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-        
-        {/* Left Column: Messaging */}
-        <div className="lg:col-span-6 space-y-6 text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#F0FDFA] border border-[#CCFBF1] text-xs font-semibold text-[#0F766E]">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#0F766E]" />
-            <span>EfficientNet-B0 Retinal Intelligence</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#0F172A] leading-tight">
-            AI-assisted retinal screening, <span className="text-[#0F766E]">designed for real-world care.</span>
-          </h1>
-
-          <p className="text-sm sm:text-base text-[#475569] leading-relaxed max-w-xl">
-            Upload retinal fundus scans, review diagnostic Grad-CAM heatmaps, and issue official clinical screening reports for patients in a secure, role-based workspace.
-          </p>
-
-          <div className="pt-1 flex flex-col sm:flex-row gap-3">
-            <Link to="/login" className="bg-[#0F766E] hover:bg-[#0D9488] text-white px-6 py-3 rounded-lg text-xs font-semibold transition shadow-xs text-center">
-              Launch Clinical Portal
-            </Link>
-            <a href="#clinical-workspace" className="bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8F9FA] px-6 py-3 rounded-lg text-xs font-semibold transition text-center">
-              Capabilities Overview
-            </a>
-          </div>
-
-          <div className="pt-4 flex items-center gap-3 sm:gap-5 text-xs text-[#64748B] border-t border-[#E2E8F0]">
-            <div><span className="font-semibold text-[#0F172A]">Grad-CAM</span> Heatmap Verification</div>
-            <span className="text-[#CBD5E1]">•</span>
-            <div><span className="font-semibold text-[#0F172A]">Grok AI</span> Clinical Context</div>
-            <span className="text-[#CBD5E1]">•</span>
-            <div><span className="font-semibold text-[#0F172A]">PDF / XLSX</span> Exports</div>
-          </div>
-        </div>
-
-        {/* Right Column: Real Software UI Preview */}
-        <div className="lg:col-span-6">
-          <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl shadow-md overflow-hidden text-left">
-            {/* PACS Dark Header Toolbar */}
-            <div className="bg-[#1E293B] border-b border-[#334155] px-4 py-2.5 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span>
-                <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
-                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
-                <span className="text-[11px] font-mono text-[#94A3B8] ml-2">SCREENING ID: MV-93320C4B</span>
+        {/* Floating Glassmorphic Navigation Bar */}
+        <header className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-2 relative z-30">
+          <div className="backdrop-blur-xl bg-slate-900/50 border border-white/20 rounded-2xl px-5 sm:px-7 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.35)] flex items-center justify-between">
+            {/* Logo / Brand */}
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-xl bg-teal-400/20 border border-teal-300/40 flex items-center justify-center shadow-[0_0_16px_rgba(45,212,191,0.35)]">
+                <Eye className="w-4 h-4 text-teal-300" />
               </div>
-              <span className="px-2.5 py-0.5 rounded text-[11px] font-extrabold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
-                NO DR DETECTED
+              <span className="text-lg font-bold tracking-tight text-white">
+                MedVision<span className="text-teal-400">AI</span>
               </span>
             </div>
 
-            {/* Medical Imaging Viewer Content */}
-            <div className="p-4 space-y-4 bg-[#090D16]">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5 text-center">
-                  <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider block">Original Fundus</span>
-                  <div className="aspect-square bg-[#050811] rounded-lg overflow-hidden border border-[#1E293B] p-2 flex items-center justify-center relative shadow-inner">
+            {/* Nav Actions */}
+            <div className="flex items-center space-x-3 sm:space-x-5">
+              <Link 
+                to="/login" 
+                className="text-xs sm:text-sm font-medium text-slate-200 hover:text-white transition px-2 py-1"
+              >
+                Clinical Sign In
+              </Link>
+              <Link 
+                to="/login" 
+                className="backdrop-blur-md bg-white/10 hover:bg-white/20 border border-white/25 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm flex items-center gap-1.5 group"
+              >
+                <span>Open Workspace</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform text-teal-300" />
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        {/* Floating Hero Panels */}
+        <section className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 grid lg:grid-cols-12 gap-8 items-center relative z-20">
+          
+          {/* Left Panel: Glassmorphic Clinical Briefing */}
+          <div className="lg:col-span-6">
+            <div className="backdrop-blur-2xl bg-slate-900/50 border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.45)] rounded-3xl p-7 sm:p-9 space-y-6 text-left relative overflow-hidden">
+              {/* Subtle ambient cyan glow inside card */}
+              <div className="absolute -top-20 -left-20 w-44 h-44 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Status Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/15 border border-teal-400/30 text-xs font-medium text-teal-300 backdrop-blur-md">
+                <CheckCircle2 className="w-3.5 h-3.5 text-teal-300" />
+                <span>EfficientNet-B0 Retinal Intelligence</span>
+              </div>
+
+              {/* Headline */}
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.18]">
+                AI-assisted retinal screening, <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-teal-200 to-emerald-300">designed for real-world care.</span>
+              </h1>
+
+              {/* Clinical Description */}
+              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-normal drop-shadow-xs">
+                Upload retinal fundus scans, review diagnostic Grad-CAM heatmaps, and issue official clinical screening reports for patients in a secure, role-based workspace.
+              </p>
+
+              {/* Call-to-Action Buttons */}
+              <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                <Link 
+                  to="/login" 
+                  className="bg-gradient-to-r from-teal-400 via-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-slate-950 font-bold px-7 py-3 rounded-full text-xs sm:text-sm tracking-wide shadow-[0_0_24px_rgba(45,212,191,0.35)] transition transform hover:-translate-y-0.5 text-center flex items-center justify-center"
+                >
+                  Launch Clinical Portal
+                </Link>
+                <a 
+                  href="#clinical-workspace" 
+                  className="backdrop-blur-md bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold px-6 py-3 rounded-full text-xs sm:text-sm transition text-center flex items-center justify-center"
+                >
+                  Capabilities Overview
+                </a>
+              </div>
+
+              {/* Feature Highlights Footer */}
+              <div className="pt-4 flex items-center flex-wrap gap-2.5 sm:gap-4 text-xs text-slate-300 border-t border-white/15">
+                <div><span className="font-semibold text-white">Grad-CAM</span> Heatmap Verification</div>
+                <span className="text-teal-400/60">•</span>
+                <div><span className="font-semibold text-white">Grok AI</span> Clinical Context</div>
+                <span className="text-teal-400/60">•</span>
+                <div><span className="font-semibold text-white">PDF / XLSX</span> Exports</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Panel: Retinal Diagnostics HUD */}
+          <div className="lg:col-span-6">
+            <div className="space-y-3.5">
+              {/* Top HUD Status Bar */}
+              <div className="flex items-center justify-between px-2">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse"></span>
+                  <span className="text-[11px] font-mono text-slate-300 tracking-wider">SYSTEM STATUS: OPTIMAL</span>
+                </div>
+                <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-teal-500/20 text-teal-300 border border-teal-400/40 backdrop-blur-md shadow-[0_0_12px_rgba(45,212,191,0.2)]">
+                  SCREENING SUCCESSFUL • NO DR DETECTED
+                </span>
+              </div>
+
+              {/* Dual Imaging Viewer Glass Cards (Authentic Medical Retinal Scans) */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                {/* Original Fundus Card */}
+                <div className="backdrop-blur-2xl bg-slate-900/50 border border-white/20 rounded-2xl p-3 sm:p-4 shadow-[0_12px_35px_rgba(0,0,0,0.35)] space-y-2 text-center transition hover:border-white/35">
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Original Fundus</span>
+                    <span className="text-[9px] font-mono text-slate-400">MACULA-CENTERED</span>
+                  </div>
+                  <div className="aspect-square bg-slate-950/80 rounded-xl overflow-hidden border border-white/10 p-2 flex items-center justify-center relative shadow-inner">
                     <img 
                       src="/assets/hero_fundus.png" 
                       alt="Original Retinal Scan" 
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain filter contrast-105"
                     />
-                    <div className="absolute bottom-1.5 left-1.5 bg-black/80 border border-slate-800 text-[9px] text-[#94A3B8] px-1.5 py-0.5 rounded font-mono">
+                    <div className="absolute bottom-2 left-2 bg-black/80 border border-white/15 backdrop-blur-md text-[9px] text-slate-300 px-2 py-0.5 rounded-md font-mono">
                       ORIGINAL SCAN
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-1.5 text-center">
-                  <span className="text-[10px] font-bold text-[#2DD4BF] uppercase tracking-wider block">AI Attention (Grad-CAM)</span>
-                  <div className="aspect-square bg-[#050811] rounded-lg overflow-hidden border border-[#0F766E]/50 p-2 flex items-center justify-center relative shadow-inner">
+                {/* Grad-CAM Attention Card */}
+                <div className="backdrop-blur-2xl bg-slate-900/50 border border-teal-400/35 rounded-2xl p-3 sm:p-4 shadow-[0_12px_35px_rgba(0,0,0,0.35),0_0_25px_rgba(45,212,191,0.12)] space-y-2 text-center transition hover:border-teal-400/60">
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-[10px] font-bold text-teal-300 uppercase tracking-wider">AI Attention (Grad-CAM)</span>
+                    <span className="text-[9px] font-mono text-teal-400/80">EFFICIENTNET-B0</span>
+                  </div>
+                  <div className="aspect-square bg-slate-950/80 rounded-xl overflow-hidden border border-teal-500/30 p-2 flex items-center justify-center relative shadow-inner">
                     <img 
                       src="/assets/hero_heatmap_overlay.png" 
                       alt="Grad-CAM Attention Heatmap" 
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain filter brightness-105"
                     />
-                    <div className="absolute bottom-1.5 left-1.5 bg-black/80 border border-teal-900 text-[9px] text-[#2DD4BF] px-1.5 py-0.5 rounded font-mono flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#2DD4BF]"></span>
+                    <div className="absolute bottom-2 left-2 bg-slate-950/85 border border-teal-400/40 backdrop-blur-md text-[9px] text-teal-300 px-2 py-0.5 rounded-md font-mono flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-teal-400 shadow-[0_0_6px_rgba(45,212,191,0.8)]"></span>
                       HEATMAP (40% OVERLAY)
                     </div>
                   </div>
@@ -116,61 +151,64 @@ const Landing = () => {
               </div>
 
               {/* Metrics Summary Strip */}
-              <div className="grid grid-cols-3 gap-2 bg-[#1E293B]/70 p-3 rounded-lg border border-[#334155] text-center text-xs">
+              <div className="backdrop-blur-2xl bg-slate-900/50 border border-white/20 rounded-2xl p-3.5 sm:p-4 shadow-[0_12px_35px_rgba(0,0,0,0.35)] grid grid-cols-3 gap-3 text-center">
                 <div>
-                  <div className="text-[10px] uppercase font-semibold text-[#94A3B8]">Confidence</div>
-                  <div className="font-extrabold text-white text-sm">99.2%</div>
+                  <div className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Confidence</div>
+                  <div className="font-extrabold text-white text-base sm:text-lg">99.2%</div>
+                </div>
+                <div className="border-x border-white/10">
+                  <div className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Risk Level</div>
+                  <div className="font-extrabold text-emerald-400 text-base sm:text-lg drop-shadow-[0_0_10px_rgba(52,211,153,0.4)]">LOW</div>
                 </div>
                 <div>
-                  <div className="text-[10px] uppercase font-semibold text-[#94A3B8]">Risk Level</div>
-                  <div className="font-extrabold text-[#34D399] text-sm">LOW</div>
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase font-semibold text-[#94A3B8]">DR Probability</div>
-                  <div className="font-extrabold text-white text-sm">0.8%</div>
+                  <div className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">DR Probability</div>
+                  <div className="font-extrabold text-white text-base sm:text-lg">0.8%</div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* Features Grid Section */}
-      <section className="py-16 border-t border-[#E2E8F0] bg-white" id="clinical-workspace">
+      <section className="py-20 border-t border-slate-800/80 bg-[#0F172A] relative z-20" id="clinical-workspace">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-left mb-12 max-w-xl">
-            <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">Clinical Workspace Capabilities</h2>
-            <p className="mt-2 text-sm text-[#475569]">Structured tooling for healthcare workers, ophthalmology specialists, and patients.</p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-400/20 text-xs font-semibold text-teal-300 mb-3">
+              <span>Platform Capabilities</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">Clinical Workspace Capabilities</h2>
+            <p className="mt-2 text-sm text-slate-400">Structured tooling for healthcare workers, ophthalmology specialists, and patients.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             <CapabilityCard 
-              icon={<Activity className="w-5 h-5 text-[#0F766E]" />}
+              icon={<Activity className="w-5 h-5 text-teal-400" />}
               title="Automated DR Grading"
               description="Deep learning evaluation of uploaded retinal fundus images with confidence scoring."
             />
             <CapabilityCard 
-              icon={<Eye className="w-5 h-5 text-[#0F766E]" />}
+              icon={<Eye className="w-5 h-5 text-teal-400" />}
               title="Grad-CAM Visual Verification"
               description="Pixel-level visual attention heatmaps highlighting region focus for clinician validation."
             />
             <CapabilityCard 
-              icon={<ShieldCheck className="w-5 h-5 text-[#059669]" />}
+              icon={<ShieldCheck className="w-5 h-5 text-emerald-400" />}
               title="Patient Health Portal"
               description="Patient portal access for viewing screening summaries and downloading official PDF reports."
             />
             <CapabilityCard 
-              icon={<Users className="w-5 h-5 text-[#D97706]" />}
+              icon={<Users className="w-5 h-5 text-amber-400" />}
               title="Clinical Directory & Excel Export"
               description="Register patient profiles and export screening outputs in structured Excel (.xlsx) workbooks."
             />
             <CapabilityCard 
-              icon={<FileText className="w-5 h-5 text-[#0F766E]" />}
+              icon={<FileText className="w-5 h-5 text-teal-400" />}
               title="Report-Grounded Assistant"
               description="RAG-assisted chatbot providing report-grounded answers to patient questions."
             />
             <CapabilityCard 
-              icon={<Lock className="w-5 h-5 text-[#475569]" />}
+              icon={<Lock className="w-5 h-5 text-slate-400" />}
               title="Role-Based Security & Cookies"
               description="HTTP-only session security and strict role-based access control (RBAC) governance."
             />
@@ -179,10 +217,10 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 text-center border-t border-[#E2E8F0] bg-[#F8F9FA] text-[#64748B]">
+      <footer className="py-8 text-center border-t border-slate-800/80 bg-[#090D16] text-slate-400 relative z-20">
         <div className="max-w-7xl mx-auto px-4 text-xs space-y-1">
-          <p className="font-semibold text-[#0F172A]">MedVisionAI Clinical Screening System</p>
-          <p>
+          <p className="font-semibold text-slate-200">MedVisionAI Clinical Screening System</p>
+          <p className="text-slate-400">
             This system is an AI-assisted screening tool intended for preliminary assessment support.<br/>
             Final clinical diagnosis must be performed by an authorized healthcare professional.
           </p>
@@ -193,16 +231,13 @@ const Landing = () => {
 };
 
 const CapabilityCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
-  <div className="rounded-lg p-6 border border-[#E2E8F0] bg-[#F8F9FA] text-left hover:border-[#CBD5E1] transition">
-    <div className="w-9 h-9 rounded-md bg-white border border-[#E2E8F0] flex items-center justify-center mb-4 shadow-2xs">
+  <div className="rounded-2xl p-6 border border-slate-800/90 bg-slate-900/60 hover:bg-slate-900/90 hover:border-slate-700/80 text-left transition shadow-sm group">
+    <div className="w-10 h-10 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center mb-4 group-hover:border-teal-500/30 transition shadow-inner">
       {icon}
     </div>
-    <h3 className="text-sm font-bold text-[#0F172A] mb-2">{title}</h3>
-    <p className="text-xs leading-relaxed text-[#475569]">{description}</p>
+    <h3 className="text-sm font-bold text-white mb-2">{title}</h3>
+    <p className="text-xs text-slate-400 leading-relaxed">{description}</p>
   </div>
 );
 
 export default Landing;
-
-
-
