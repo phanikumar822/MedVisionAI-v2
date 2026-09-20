@@ -1,4 +1,5 @@
 from datetime import timedelta, datetime
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -15,6 +16,7 @@ router = APIRouter()
 
 class SetPasswordRequest(BaseModel):
     token: str
+    username: Optional[str] = None
     new_password: str
 
 @router.post("/login", response_model=Token)
@@ -81,13 +83,13 @@ def read_users_me(current_user: User = Depends(get_current_user)):
 
 @router.post("/set-password")
 def set_password(data: SetPasswordRequest, db: Session = Depends(get_db)):
-    """Patient activates their account by setting a password via the emailed token."""
+    """Patient activates their account by choosing their username/ID and password."""
     user = db.query(User).filter(User.reset_token == data.token).first()
 
     if not user:
         raise HTTPException(
             status_code=400, 
-            detail="This link has already been used to activate your account or is invalid. If you already set your password, please log in."
+            detail="This activation link has already been used to activate your account or is invalid. If you already set your credentials, please log in."
         )
 
     if user.reset_token_expires and datetime.utcnow() > user.reset_token_expires:
@@ -96,8 +98,20 @@ def set_password(data: SetPasswordRequest, db: Session = Depends(get_db)):
             detail="This activation link has expired (48-hour limit). Please contact your clinic to request a new link."
         )
 
-    if len(data.new_password) < 8:
-        raise HTTPException(status_code=400, detail="Password must be at least 8 characters.")
+    # If patient customized or confirmed their preferred username/ID
+    if data.username and data.username.strip():
+        chosen_username = data.username.strip()
+        # Check if chosen username is already taken by any OTHER user
+        existing_user = db.query(User).filter(User.username == chosen_username, User.id != user.id).first()
+        if existing_user:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"The username or ID '{chosen_username}' is already in use. Please select a different username or ID."
+            )
+        user.username = chosen_username
+
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters.")
 
     user.hashed_password = get_password_hash(data.new_password)
     user.reset_token = None
@@ -105,11 +119,14 @@ def set_password(data: SetPasswordRequest, db: Session = Depends(get_db)):
     user.require_password_change = False
     db.commit()
 
-    return {"message": "Password set successfully. You can now log in to the patient portal."}
+    return {
+        "message": "Account credentials configured successfully! You can now log in.",
+        "username": user.username
+    }
 
 @router.get("/verify-token/{token}")
 def verify_reset_token(token: str, db: Session = Depends(get_db)):
-    """Verify if a reset token is valid before showing the set-password form."""
+    """Verify if a reset token is valid before showing the credential setup form."""
     user = db.query(User).filter(User.reset_token == token).first()
     if not user:
         raise HTTPException(
@@ -121,5 +138,15 @@ def verify_reset_token(token: str, db: Session = Depends(get_db)):
             status_code=400, 
             detail="This activation link has expired (48-hour limit)."
         )
-    return {"valid": True, "username": user.username}
+    
+    patient = db.query(Patient).filter(Patient.user_id == user.id).first()
+    patient_name = f"{patient.first_name} {patient.last_name}" if patient else ""
+    patient_email = patient.email if patient else ""
+
+    return {
+        "valid": True, 
+        "username": user.username,
+        "patient_name": patient_name,
+        "patient_email": patient_email
+    }
 

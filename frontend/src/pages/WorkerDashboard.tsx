@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, 
   Download, LogOut, Activity, Sparkles, BarChart2, PieChart, TrendingUp, ShieldAlert,
-  Sliders, CheckCircle2, RefreshCw, Key
+  Sliders, CheckCircle2, RefreshCw
 } from 'lucide-react';
 
 interface Patient { id: number; name: string; patient_access_id: string; email: string; username: string; }
@@ -41,25 +41,8 @@ const WorkerDashboard = () => {
   const [stats, setStats] = useState<Stats | null>(null);
 
   // New patient form state
-  const [newPatient, setNewPatient] = useState({ 
-    first_name: '', 
-    last_name: '', 
-    email: '', 
-    phone: '',
-    username: '',
-    password: ''
-  });
-  const [showNewPatientPassword, setShowNewPatientPassword] = useState(false);
+  const [newPatient, setNewPatient] = useState({ first_name: '', last_name: '', email: '', phone: '' });
   const [createdPatient, setCreatedPatient] = useState<any>(null);
-
-  const generateRandomPassword = () => {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
-    let pwd = '';
-    for (let i = 0; i < 10; i++) {
-      pwd += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setNewPatient(prev => ({ ...prev, password: pwd }));
-  };
 
   useEffect(() => {
     fetchPatients();
@@ -119,7 +102,7 @@ const WorkerDashboard = () => {
       setCreatedPatient(res.data);
       fetchPatients();
       fetchStats();
-      setNewPatient({ first_name: '', last_name: '', email: '', phone: '', username: '', password: '' });
+      setNewPatient({ first_name: '', last_name: '', email: '', phone: '' });
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to create patient.');
     }
@@ -735,29 +718,28 @@ const WorkerDashboard = () => {
             {createdPatient ? (
               <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-xl p-6 text-center space-y-3">
                 <CheckCircle className="w-10 h-10 text-[#047857] mx-auto tick-anim-box" />
-                <p className="font-extrabold text-[#065F46] text-lg">Patient account created successfully</p>
-                <div className="text-xs space-y-1.5 font-mono rounded-lg p-4 text-left border bg-white border-[#A7F3D0] text-[#0F172A]">
+                <p className="font-extrabold text-[#065F46] text-lg">Patient registered successfully</p>
+                <div className="text-xs space-y-2 font-mono rounded-lg p-4 text-left border bg-white border-[#A7F3D0] text-[#0F172A]">
                   <p><span className="font-semibold text-[#64748B]">Patient ID:</span> {createdPatient.patient_access_id}</p>
-                  <p><span className="font-semibold text-[#64748B]">Username:</span> <span className="text-[#0F766E] font-bold">{createdPatient.username}</span></p>
                   <p><span className="font-semibold text-[#64748B]">Email:</span> {createdPatient.email}</p>
-                  {createdPatient.password && (
-                    <p><span className="font-semibold text-[#64748B]">Password:</span> <span className="font-bold text-[#0F172A] bg-slate-100 px-1.5 py-0.5 rounded">{createdPatient.password}</span></p>
-                  )}
+                  <p className="pt-2 text-xs font-sans text-[#059669] flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-[#059669]" />
+                    Invitation email dispatched to <strong>{createdPatient.email}</strong>.
+                  </p>
+                  <p className="text-[11px] font-sans text-slate-500 leading-relaxed">
+                    The patient will click the link in their email to choose their own <strong>Username / ID</strong> and set their <strong>Password</strong>.
+                  </p>
                   {createdPatient.set_password_link && (
-                    <p className="pt-2 text-xs font-sans break-all">
-                      <span className="font-bold">Activation Link:</span>{' '}
+                    <p className="pt-2 text-xs font-sans break-all border-t border-slate-100">
+                      <span className="font-bold text-slate-700">Activation Link (Direct Access):</span>{' '}
                       <a href={createdPatient.set_password_link} target="_blank" rel="noreferrer" className="text-[#0F766E] underline font-semibold">
                         {createdPatient.set_password_link}
                       </a>
                     </p>
                   )}
-                  <p className="pt-2 text-[11px] font-sans text-[#059669] flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
-                    Welcome email with login credentials dispatched to <strong>{createdPatient.email}</strong>.
-                  </p>
                 </div>
                 <button onClick={() => { setCreatedPatient(null); setTab('screen'); }}
-                  className="mt-2 bg-[#0F766E] hover:bg-[#0D9488] text-white px-6 py-2 rounded-lg text-xs font-bold shadow-xs transition">
+                  className="mt-2 bg-[#0F766E] hover:bg-[#0D9488] text-white px-6 py-2 rounded-lg text-xs font-bold shadow-xs transition cursor-pointer">
                   Initiate Retinal Screening
                 </button>
               </div>
@@ -768,16 +750,8 @@ const WorkerDashboard = () => {
                     <label className="block text-xs font-semibold mb-1 text-[#475569]">First Name <span className="text-rose-600">*</span></label>
                     <input 
                       value={newPatient.first_name} 
-                      onChange={e => {
-                        const val = e.target.value;
-                        setNewPatient(prev => ({
-                          ...prev,
-                          first_name: val,
-                          username: prev.username === '' || prev.username === `${prev.first_name.toLowerCase()}.${prev.last_name.toLowerCase()}`
-                            ? (val ? `${val.toLowerCase().replace(/[^a-z0-9]/g, '')}.${prev.last_name.toLowerCase().replace(/[^a-z0-9]/g, '')}` : prev.username)
-                            : prev.username
-                        }));
-                      }}
+                      onChange={e => setNewPatient({ ...newPatient, first_name: e.target.value })}
+                      placeholder="e.g. John"
                       className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2.5 text-xs outline-none focus:border-[#0F766E] focus:bg-white transition" 
                       required 
                     />
@@ -786,23 +760,15 @@ const WorkerDashboard = () => {
                     <label className="block text-xs font-semibold mb-1 text-[#475569]">Last Name <span className="text-rose-600">*</span></label>
                     <input 
                       value={newPatient.last_name} 
-                      onChange={e => {
-                        const val = e.target.value;
-                        setNewPatient(prev => ({
-                          ...prev,
-                          last_name: val,
-                          username: prev.username === '' || prev.username === `${prev.first_name.toLowerCase()}.${prev.last_name.toLowerCase()}`
-                            ? (prev.first_name ? `${prev.first_name.toLowerCase().replace(/[^a-z0-9]/g, '')}.${val.toLowerCase().replace(/[^a-z0-9]/g, '')}` : prev.username)
-                            : prev.username
-                        }));
-                      }}
+                      onChange={e => setNewPatient({ ...newPatient, last_name: e.target.value })}
+                      placeholder="e.g. Doe"
                       className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2.5 text-xs outline-none focus:border-[#0F766E] focus:bg-white transition" 
                       required 
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#475569]">Email Address <span className="text-rose-600">*</span></label>
+                  <label className="block text-xs font-semibold mb-1 text-[#475569]">Patient Email Address <span className="text-rose-600">*</span></label>
                   <input 
                     type="email" 
                     value={newPatient.email} 
@@ -811,7 +777,7 @@ const WorkerDashboard = () => {
                     className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2.5 text-xs outline-none focus:border-[#0F766E] focus:bg-white transition" 
                     required 
                   />
-                  <p className="text-[11px] text-[#64748B] mt-1">Credentials and reports will be dispatched to this email address.</p>
+                  <p className="text-[11px] text-[#64748B] mt-1">An invitation link will be sent to this email so the patient can choose their own Username and Password.</p>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold mb-1 text-[#475569]">Phone Number (Optional)</label>
@@ -824,57 +790,8 @@ const WorkerDashboard = () => {
                   />
                 </div>
 
-                {/* Portal Username Field (Doctor Setup) */}
-                <div className="pt-2 border-t border-[#E2E8F0]">
-                  <label className="block text-xs font-semibold mb-1 text-[#475569]">
-                    Portal Username <span className="text-[#64748B] font-normal">(Editable)</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    value={newPatient.username} 
-                    onChange={e => setNewPatient({ ...newPatient, username: e.target.value })}
-                    placeholder="e.g. john.doe (auto-suggested or customized)"
-                    className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] font-mono rounded-lg p-2.5 text-xs outline-none focus:border-[#0F766E] focus:bg-white transition" 
-                  />
-                  <p className="text-[11px] text-[#64748B] mt-1">Patient can log in using either this username or their email address.</p>
-                </div>
-
-                {/* Portal Password Field (Doctor Setup) */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-semibold text-[#475569]">
-                      Portal Password <span className="text-[#64748B] font-normal">(Doctor setup)</span>
-                    </label>
-                    <button 
-                      type="button" 
-                      onClick={generateRandomPassword}
-                      className="text-[11px] text-[#0F766E] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
-                    >
-                      <Key className="w-3 h-3" /> Auto-generate
-                    </button>
-                  </div>
-                  <div className="relative">
-                    <input 
-                      type={showNewPatientPassword ? "text" : "password"} 
-                      value={newPatient.password} 
-                      onChange={e => setNewPatient({ ...newPatient, password: e.target.value })}
-                      placeholder="Set initial password (e.g. MedVision@2026)"
-                      className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] font-mono rounded-lg p-2.5 pr-10 text-xs outline-none focus:border-[#0F766E] focus:bg-white transition" 
-                    />
-                    <button 
-                      type="button" 
-                      onClick={() => setShowNewPatientPassword(!showNewPatientPassword)}
-                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                      title={showNewPatientPassword ? "Hide password" : "Show password"}
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <p className="text-[11px] text-[#64748B] mt-1">When set, the patient can immediately log in and will receive this password in their email.</p>
-                </div>
-
                 <button type="submit" className="w-full bg-[#0F766E] hover:bg-[#0D9488] text-white py-3 rounded-lg font-bold text-xs shadow-xs transition mt-2 cursor-pointer">
-                  Register Patient & Dispatch Credentials
+                  Register Patient & Send Setup Email
                 </button>
               </form>
             )}
