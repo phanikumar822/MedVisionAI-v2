@@ -21,21 +21,23 @@ class CreatePatientRequest(BaseModel):
     last_name: str
     email: str  # Required for welcome email
     phone: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
 
 
 def _generate_username(first_name: str, last_name: str, db: Session) -> str:
-    """Generate a unique username like john.doe_k3m9"""
-    base = f"{first_name.lower()}.{last_name.lower()}"
-    # Remove any non-alphanumeric chars except dot
+    """Generate a clean, natural unique username like john.doe or john.doe2 without random hashes"""
+    base = f"{first_name.lower().strip()}.{last_name.lower().strip()}"
     base = re.sub(r"[^a-z0-9.]", "", base)
-    # Try base first, then add random suffix until unique
-    for _ in range(10):
-        suffix = secrets.token_hex(2)  # 4 random hex chars e.g. 'a3f2'
-        candidate = f"{base}_{suffix}"
+    if not base:
+        base = "patient"
+    if not db.query(User).filter(User.username == base).first():
+        return base
+    for i in range(2, 1000):
+        candidate = f"{base}{i}"
         if not db.query(User).filter(User.username == candidate).first():
             return candidate
-    # Ultimate fallback
-    return f"{base}_{uuid.uuid4().hex[:6]}"
+    return f"{base}_{uuid.uuid4().hex[:4]}"
 
 
 @router.post("/", status_code=201)
@@ -44,21 +46,56 @@ def create_patient(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_role([UserRole.HEALTHCARE_WORKER, UserRole.ADMIN]))
 ):
-    # Auto-generate username from patient name
-    username = _generate_username(data.first_name, data.last_name, db)
+    # Determine username
+    if data.username and data.username.strip():
+        chosen_username = data.username.strip()
+        existing = db.query(User).filter(User.username == chosen_username).first()
+        if existing:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Username '{chosen_username}' is already in use. Please select a different username."
+            )
+        username = chosen_username
+    else:
+        username = _generate_username(data.first_name, data.last_name, db)
 
-    # Generate a secure one-time password-reset token (48h expiry)
-    reset_token = secrets.token_urlsafe(32)
-    token_expires = datetime.utcnow() + timedelta(hours=48)
+    # Check if patient with this email already exists
+    clean_email = data.email.strip().lower()
+    existing_patient = db.query(Patient).filter(Patient.email == clean_email).first()
+    if existing_patient:
+        raise HTTPException(
+            status_code=400,
+            detail=f"A patient with email '{data.email}' is already registered in the clinic system."
+        )
 
-    # Create user account – NO password yet, patient sets it themselves
+    # Handle password setup
+    full_name = f"{data.first_name.strip()} {data.last_name.strip()}"
+    reset_token = None
+    token_expires = None
+    set_password_link = None
+    hashed_pwd = None
+    require_pwd_change = False
+
+    if data.password and data.password.strip():
+        if len(data.password.strip()) < 6:
+            raise HTTPException(status_code=400, detail="Password must be at least 6 characters.")
+        hashed_pwd = get_password_hash(data.password.strip())
+        require_pwd_change = False
+    else:
+        # Fallback to email activation link if doctor did not specify password
+        reset_token = secrets.token_urlsafe(32)
+        token_expires = datetime.utcnow() + timedelta(hours=48)
+        set_password_link = f"{settings.FRONTEND_URL}/set-password?token={reset_token}"
+        require_pwd_change = True
+
+    # Create user account
     user = User(
         username=username,
-        hashed_password=None,
+        hashed_password=hashed_pwd,
         role=UserRole.PATIENT,
         reset_token=reset_token,
         reset_token_expires=token_expires,
-        require_password_change=True,
+        require_password_change=require_pwd_change,
     )
     db.add(user)
     db.commit()
@@ -69,27 +106,33 @@ def create_patient(
     patient = Patient(
         user_id=user.id,
         patient_access_id=patient_access_id,
-        first_name=data.first_name,
-        last_name=data.last_name,
-        email=data.email,
-        phone=data.phone,
+        first_name=data.first_name.strip(),
+        last_name=data.last_name.strip(),
+        email=clean_email,
+        phone=data.phone.strip() if data.phone else None,
     )
     db.add(patient)
     db.commit()
     db.refresh(patient)
 
-    # Send welcome email with username + set-password link
-    full_name = f"{data.first_name} {data.last_name}"
-    set_password_link = f"{settings.FRONTEND_URL}/set-password?token={reset_token}"
-    send_welcome_email(full_name, data.email, username, set_password_link)
+    # Send welcome email with credentials
+    pwd_to_send = data.password.strip() if (data.password and data.password.strip()) else None
+    send_welcome_email(
+        patient_name=full_name,
+        patient_email=clean_email,
+        username=username,
+        password=pwd_to_send,
+        set_password_link=set_password_link
+    )
 
     return {
         "patient_id": patient.id,
         "patient_access_id": patient_access_id,
         "username": username,
-        "email": data.email,
+        "email": clean_email,
+        "password": pwd_to_send,
         "set_password_link": set_password_link,
-        "message": f"Patient account created. Welcome email with set-password link sent to {data.email}.",
+        "message": f"Patient account created successfully. Welcome email with credentials sent to {clean_email}.",
     }
 
 

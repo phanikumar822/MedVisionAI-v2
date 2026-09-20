@@ -90,14 +90,14 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="form">
               {/* Username Input Box */}
               <div className="inputBox">
-                <label className="field-label">{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username'}</label>
+                <label className="field-label">{mode === 'doctor' ? 'Doctor / Admin Username' : 'Patient Username or Email'}</label>
                 <div className="input-wrap">
                   <input
                     type="text"
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder={mode === 'doctor' ? 'e.g. worker1 or medvision.admin' : 'Enter patient username'}
+                    placeholder={mode === 'doctor' ? 'e.g. worker1 or medvision.admin' : 'Enter username or registered email'}
                   />
                   <div className="fingerprint-scanner-box" title="Biometric Security Scan">
                     <Fingerprint className="scanner-icon" />
