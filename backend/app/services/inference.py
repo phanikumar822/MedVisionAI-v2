@@ -46,17 +46,18 @@ class InferenceService:
             print(f"Failed to load model: {e}")
             return None
 
-    def check_image_quality(self, image: Image.Image) -> bool:
-        # Simple heuristic: check resolution
-        if image.width < 224 or image.height < 224:
-            return False
-        return True
+    def check_image_quality(self, image: Image.Image) -> tuple[bool, str]:
+        # Heuristic: Ensure image resolution is sufficient for meaningful feature extraction (min 100x100)
+        if image.width < 100 or image.height < 100:
+            return False, f"Image resolution ({image.width}x{image.height}) is too low for reliable screening. Please upload a scan of at least 100x100 pixels."
+        return True, ""
 
     def predict(self, image_path: str):
         image = Image.open(image_path).convert("RGB")
         
-        if not self.check_image_quality(image):
-            raise ValueError("Image quality is insufficient for reliable screening.")
+        is_valid, reason = self.check_image_quality(image)
+        if not is_valid:
+            raise ValueError(reason)
 
         input_tensor = self.transform(image).unsqueeze(0).to(self.device)
         
