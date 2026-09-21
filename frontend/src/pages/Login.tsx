@@ -36,6 +36,8 @@ const Login = () => {
 
       if (userData.role === 'PATIENT') {
         navigate('/patient');
+      } else if (userData.role === 'SPECIALIST') {
+        navigate('/doctor');
       } else {
         navigate('/worker');
       }

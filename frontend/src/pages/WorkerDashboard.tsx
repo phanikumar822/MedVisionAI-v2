@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { 
-  Upload, Eye, FileText, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, 
+  Upload, Eye, UserPlus, Users, AlertTriangle, CheckCircle, Trash2, 
   Download, LogOut, Activity, Sparkles, BarChart2, PieChart, TrendingUp, ShieldAlert,
-  Sliders, CheckCircle2, RefreshCw
+  Sliders, CheckCircle2, RefreshCw, Layers, Stethoscope
 } from 'lucide-react';
 
 interface Patient { id: number; name: string; patient_access_id: string; email: string; username: string; }
@@ -30,14 +31,23 @@ interface Stats {
 }
 
 const WorkerDashboard = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [tab, setTab] = useState<'screen' | 'analytics' | 'patients' | 'new-patient'>('screen');
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatientId, setSelectedPatientId] = useState('');
+  const [selectedDiseaseId, setSelectedDiseaseId] = useState('diabetic_retinopathy');
+  const [selectedModality, setSelectedModality] = useState('Fundus');
+  const [selectedEye, setSelectedEye] = useState('OD');
+  const [refractionData, setRefractionData] = useState({
+    sphere: -1.5,
+    cylinder: -0.75,
+    axis: 90,
+    visual_acuity: '20/40',
+    age: 35
+  });
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ScreeningResult | null>(null);
-  const [reportStatus, setReportStatus] = useState<'idle' | 'generating' | 'done'>('idle');
   const [stats, setStats] = useState<Stats | null>(null);
 
   // New patient form state
@@ -63,37 +73,49 @@ const WorkerDashboard = () => {
     } catch (e) { console.error(e); }
   };
 
+  const handleDiseaseChange = (diseaseId: string) => {
+    setSelectedDiseaseId(diseaseId);
+    if (diseaseId === 'diabetic_macular_edema') setSelectedModality('OCT');
+    else if (diseaseId === 'cataract' || diseaseId === 'ocular_surface') setSelectedModality('Slit-Lamp');
+    else if (diseaseId === 'vision_assessment') setSelectedModality('Clinical Refraction Data');
+    else if (diseaseId === 'retinopathy_of_prematurity') setSelectedModality('Pediatric Fundus');
+    else setSelectedModality('Fundus');
+  };
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file || !selectedPatientId) return;
+    if (!selectedPatientId) return;
+    if (selectedDiseaseId !== 'vision_assessment' && !file) {
+      alert('Please select an image scan for this examination.');
+      return;
+    }
     setLoading(true);
     setResult(null);
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('patient_id', selectedPatientId);
+    formData.append('disease_id', selectedDiseaseId);
+    formData.append('modality', selectedModality);
+    formData.append('eye', selectedEye);
+    if (file) formData.append('file', file);
+    if (selectedDiseaseId === 'vision_assessment') {
+      formData.append('refraction_data', JSON.stringify(refractionData));
+    }
     try {
-      const res = await api.post(`/screen/?patient_id=${selectedPatientId}`, formData, {
+      const res = await api.post('/screen/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setResult(res.data);
-      setReportStatus('idle');
       fetchStats();
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Screening failed.');
+      const errDetail = err.response?.data?.detail;
+      if (typeof errDetail === 'object' && errDetail?.result === 'UNABLE TO ANALYZE') {
+        alert(`UNABLE TO ANALYZE: ${errDetail.reason}\n\nQuality Issues:\n${errDetail.details?.join('\n') || ''}`);
+      } else {
+        alert(typeof errDetail === 'string' ? errDetail : 'Screening failed.');
+      }
     } finally { setLoading(false); }
   };
 
-  const handleGenerateAndPublish = async () => {
-    if (!result) return;
-    setReportStatus('generating');
-    try {
-      const genRes = await api.post(`/reports/${result.id}/generate`);
-      await api.post(`/reports/${genRes.data.report_id}/publish`);
-      setReportStatus('done');
-    } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to generate or publish report.');
-      setReportStatus('idle');
-    }
-  };
 
   const handleCreatePatient = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,6 +205,24 @@ const WorkerDashboard = () => {
               ))}
             </div>
 
+            <Link
+              to="/models"
+              className="text-xs text-slate-600 hover:text-slate-900 bg-white border border-slate-300 hover:bg-slate-50 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 shadow-2xs transition"
+            >
+              <Layers className="w-3.5 h-3.5 text-teal-600" />
+              Model Registry
+            </Link>
+
+            {(user?.role === 'SPECIALIST' || user?.role === 'ADMIN') && (
+              <Link
+                to="/doctor"
+                className="text-xs text-white bg-slate-900 hover:bg-slate-800 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 shadow-2xs transition"
+              >
+                <Stethoscope className="w-3.5 h-3.5 text-teal-400" />
+                Doctor Workstation
+              </Link>
+            )}
+
             <button
               onClick={logout}
               className="p-2 rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition"
@@ -244,30 +284,117 @@ const WorkerDashboard = () => {
           <div className="space-y-6">
             <div className="p-6 rounded-xl border border-[#E2E8F0] bg-white shadow-xs">
               <h2 className="text-lg font-extrabold mb-4 flex items-center gap-2 text-[#0F172A]">
-                <Upload className="w-5 h-5 text-[#0F766E]" /> New Retinal Screening
+                <Upload className="w-5 h-5 text-[#0F766E]" /> New Multi-Disease Clinical Examination
               </h2>
               <form onSubmit={handleUpload} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#475569]">Select Patient Profile</label>
-                  <select value={selectedPatientId} onChange={e => setSelectedPatientId(e.target.value)}
-                    className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2.5 text-sm outline-none focus:border-[#0F766E] focus:bg-white transition" required>
-                    <option value="">— Select a patient profile —</option>
-                    {patients.map(p => (
-                      <option key={p.id} value={p.id}>{p.name} ({p.patient_access_id})</option>
-                    ))}
-                  </select>
-                  {patients.length === 0 && (
-                    <p className="text-xs text-amber-700 mt-1">No patient profiles registered yet. <button type="button" onClick={() => setTab('new-patient')} className="underline font-semibold">Register patient profile →</button></p>
-                  )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-[#475569]">Select Patient Profile</label>
+                    <select value={selectedPatientId} onChange={e => setSelectedPatientId(e.target.value)}
+                      className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2.5 text-sm outline-none focus:border-[#0F766E] focus:bg-white transition" required>
+                      <option value="">— Select a patient profile —</option>
+                      {patients.map(p => (
+                        <option key={p.id} value={p.id}>{p.name} ({p.patient_access_id})</option>
+                      ))}
+                    </select>
+                    {patients.length === 0 && (
+                      <p className="text-xs text-amber-700 mt-1">No patient profiles registered yet. <button type="button" onClick={() => setTab('new-patient')} className="underline font-semibold">Register patient profile →</button></p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-[#475569]">Target Pathology / Disease</label>
+                    <select value={selectedDiseaseId} onChange={e => handleDiseaseChange(e.target.value)}
+                      className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2.5 text-sm outline-none focus:border-[#0F766E] focus:bg-white transition font-medium">
+                      <option value="diabetic_retinopathy">1. Diabetic Retinopathy (Fundus)</option>
+                      <option value="diabetic_macular_edema">2. Diabetic Macular Edema (OCT)</option>
+                      <option value="glaucoma">3. Glaucoma (Fundus)</option>
+                      <option value="amd">4. Age-Related Macular Degeneration (Fundus/OCT)</option>
+                      <option value="cataract">5. Cataract (Slit-Lamp [Research])</option>
+                      <option value="hypertensive_retinopathy">6. Hypertensive Retinopathy (Fundus [Experimental])</option>
+                      <option value="retinal_vein_occlusion">7. Retinal Vein Occlusion (CRVO/BRVO)</option>
+                      <option value="retinopathy_of_prematurity">8. Retinopathy of Prematurity (Pediatric Fundus)</option>
+                      <option value="ocular_surface">9. Corneal & Ocular Surface Disease (Slit-Lamp)</option>
+                      <option value="vision_assessment">10. Refractive Error & Vision Assessment (Clinical Data)</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#475569]">Retinal Fundus Image</label>
-                  <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)}
-                    className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2 text-sm outline-none focus:border-[#0F766E] focus:bg-white transition" required />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-[#475569]">Imaging / Clinical Modality</label>
+                    <select value={selectedModality} onChange={e => setSelectedModality(e.target.value)}
+                      className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2.5 text-sm outline-none focus:border-[#0F766E] focus:bg-white transition">
+                      <option value="Fundus">Fundus Photography</option>
+                      <option value="OCT">Optical Coherence Tomography (OCT)</option>
+                      <option value="Slit-Lamp">Slit-Lamp Biomicroscopy</option>
+                      <option value="Pediatric Fundus">Pediatric Widefield Fundus</option>
+                      <option value="Clinical Refraction Data">Clinical Refraction & Visual Acuity</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-[#475569]">Target Eye (Laterality)</label>
+                    <select value={selectedEye} onChange={e => setSelectedEye(e.target.value)}
+                      className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2.5 text-sm outline-none focus:border-[#0F766E] focus:bg-white transition">
+                      <option value="OD">Right Eye (OD - Oculus Dexter)</option>
+                      <option value="OS">Left Eye (OS - Oculus Sinister)</option>
+                      <option value="OU">Both Eyes (OU - Oculus Uterque)</option>
+                    </select>
+                  </div>
                 </div>
+
+                {/* Quantitative Refraction Form if Vision Assessment */}
+                {selectedDiseaseId === 'vision_assessment' ? (
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-3">
+                    <span className="text-xs font-bold text-slate-700 block">Enter Quantitative Refraction Parameters</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                      <div>
+                        <label className="text-[11px] text-slate-500 block mb-1">Sphere (DS)</label>
+                        <input type="number" step="0.25" value={refractionData.sphere}
+                          onChange={e => setRefractionData({...refractionData, sphere: parseFloat(e.target.value) || 0})}
+                          className="w-full border border-slate-300 rounded p-1.5 text-xs bg-white font-mono" />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-slate-500 block mb-1">Cylinder (DC)</label>
+                        <input type="number" step="0.25" value={refractionData.cylinder}
+                          onChange={e => setRefractionData({...refractionData, cylinder: parseFloat(e.target.value) || 0})}
+                          className="w-full border border-slate-300 rounded p-1.5 text-xs bg-white font-mono" />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-slate-500 block mb-1">Axis (°)</label>
+                        <input type="number" min="0" max="180" value={refractionData.axis}
+                          onChange={e => setRefractionData({...refractionData, axis: parseInt(e.target.value) || 0})}
+                          className="w-full border border-slate-300 rounded p-1.5 text-xs bg-white font-mono" />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-slate-500 block mb-1">Visual Acuity</label>
+                        <input type="text" value={refractionData.visual_acuity}
+                          onChange={e => setRefractionData({...refractionData, visual_acuity: e.target.value})}
+                          placeholder="20/20"
+                          className="w-full border border-slate-300 rounded p-1.5 text-xs bg-white font-mono" />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-slate-500 block mb-1">Patient Age</label>
+                        <input type="number" value={refractionData.age}
+                          onChange={e => setRefractionData({...refractionData, age: parseInt(e.target.value) || 30})}
+                          className="w-full border border-slate-300 rounded p-1.5 text-xs bg-white font-mono" />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-[#475569]">
+                      Upload {selectedModality} Scan (Quality Gated)
+                    </label>
+                    <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)}
+                      className="w-full border border-[#CBD5E1] bg-[#F8F9FA] text-[#0F172A] rounded-lg p-2 text-sm outline-none focus:border-[#0F766E] focus:bg-white transition" required />
+                  </div>
+                )}
+
                 <button type="submit" disabled={loading || !selectedPatientId}
                   className="w-full bg-[#0F766E] hover:bg-[#0D9488] disabled:opacity-40 text-white px-6 py-3 rounded-lg font-bold transition shadow-xs text-sm">
-                  {loading ? '⏳ Analyzing Retinal Scan & Computing Grad-CAM Gradient…' : 'Run Diagnostic AI Inference'}
+                  {loading ? '⏳ Pre-checking Image Quality & Running AI Model…' : 'Run Decision-Support AI Examination'}
                 </button>
               </form>
             </div>
@@ -429,16 +556,24 @@ const WorkerDashboard = () => {
                   <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" /> {result.recommendation}
                 </div>
 
-                <div className="flex items-center gap-4">
-                  {reportStatus !== 'done' ? (
-                    <button onClick={handleGenerateAndPublish} disabled={reportStatus === 'generating'}
-                      className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] disabled:opacity-40 text-white px-5 py-2.5 rounded-lg text-xs font-bold shadow-xs transition">
-                      <FileText className="w-4 h-4" />
-                      {reportStatus === 'generating' ? 'Generating Report…' : 'Publish Report & Notify Patient'}
-                    </button>
-                  ) : (
-                    <div className="flex items-center gap-2 text-[#065F46] font-bold text-xs">
-                      <CheckCircle className="w-5 h-5 tick-anim-box text-[#047857]" /> Report published and delivered to patient portal & email.
+                {/* Doctor Verification Gate Governance Alert */}
+                <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 space-y-2">
+                  <div className="flex items-center gap-2 text-teal-800 font-bold text-xs">
+                    <CheckCircle className="w-4 h-4 text-teal-600" />
+                    Case Submitted to Doctor Review Queue (Status: PENDING_DOCTOR_REVIEW)
+                  </div>
+                  <p className="text-[11px] text-teal-900 leading-relaxed">
+                    Under clinical governance policy, preliminary AI findings cannot be published directly to patients by clinicians.
+                    An authorized ophthalmologist must formally review and verify this case in the Doctor Workstation before patient notification is released.
+                  </p>
+                  {(user?.role === 'SPECIALIST' || user?.role === 'ADMIN') && (
+                    <div className="pt-2">
+                      <a
+                        href="/doctor"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-teal-700 hover:bg-teal-800 px-4 py-2 rounded-lg transition shadow-xs"
+                      >
+                        Open Doctor Review Workstation →
+                      </a>
                     </div>
                   )}
                 </div>

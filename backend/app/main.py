@@ -7,23 +7,9 @@ from app.core.config import settings
 from app.database.session import engine, Base
 import app.models
 
-def ensure_db_migrations():
-    try:
-        import sqlite3
-        db_path = settings.DATABASE_URL.replace("sqlite:///", "")
-        if os.path.exists(db_path):
-            conn = sqlite3.connect(db_path)
-            cursor = conn.cursor()
-            cols = [row[1] for row in cursor.execute("PRAGMA table_info(screenings)").fetchall()]
-            if cols and "ai_context" not in cols:
-                cursor.execute("ALTER TABLE screenings ADD COLUMN ai_context TEXT;")
-                conn.commit()
-                print("Auto-migrated screenings table with ai_context column.")
-            conn.close()
-    except Exception as e:
-        print("Migration check note:", e)
+from app.database.db_migration import run_db_migrations
 
-ensure_db_migrations()
+run_db_migrations()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title=settings.PROJECT_NAME)
